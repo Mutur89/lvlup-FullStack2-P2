@@ -1,0 +1,635 @@
+/* Carrito.html specific styles moved from inline <style> */
+body.carrito-page {
+  background: #212529;
+  color: #fff;
+}
+.carrito-container {
+  max-width: 700px;
+  margin: 40px auto;
+  background: #343a40;
+  border-radius: 12px;
+  padding: 32px;
+}
+.carrito-lista {
+  list-style: none;
+  padding: 0;
+}
+.carrito-lista li {
+  background: #23272b;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+}
+.carrito-img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 20px;
+  background: #fff;
+}
+.carrito-btns {
+  display: flex;
+  gap: 16px;
+  margin-top: 32px;
+  justify-content: center;
+}
+.logo-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+.logo-header img {
+  width: 48px;
+  height: 48px;
+}
+.logo-header h1 {
+  font-size: 2rem;
+  margin: 0;
+  color: #fff;
+}
+.empty-msg {
+  text-align: center;
+  color: #ccc;
+  margin: 40px 0;
+}
+/* Fondo principal negro y layout flex para sticky footer */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background-color: #000000 !important;
+  color: #e0e0e0 !important;
+}
+
+/* Navbar */
+.navbar {
+  background-color: #000 !important;
+  border-bottom: 2px solid #1E90FF;
+}
+
+.navbar-brand,
+.nav-link {
+  color: #e0e0e0 !important;
+}
+
+.navbar-brand img {
+  filter: drop-shadow(0 0 5px #39FF14);
+}
+
+/* Hero Section - más oscuro */
+.bg-secondary.bg-opacity-10 {
+  background-color: #181a20 !important;
+  border-radius: 12px;
+  box-shadow: 0 0 24px #1E90FF22;
+}
+
+/* Hero Section texto principal y .lead */
+.hero-text, .lead {
+  color: #fff !important;
+  font-weight: 600;
+  text-shadow: 0 0 8px #000, 0 0 2px #1E90FF;
+}
+
+/* Catálogo de productos - fondo oscuro */
+section#productos {
+  background-color: #111218 !important;
+  border-radius: 12px;
+  box-shadow: 0 0 24px #39FF1433;
+}
+
+/* Cards de productos */
+.card {
+  background-color: #181a20;
+  border: 1px solid #1E90FF;
+  border-radius: 12px;
+  box-shadow: 0 0 10px #1E90FF33;
+}
+
+.card-title {
+  color: #39FF14 !important;
+  text-shadow: 0 0 4px #1E90FF;
+}
+
+.card-text, .fw-bold, .card p {
+  color: #e0e0e0 !important;
+}
+
+/* Imagen en cards */
+
+.card .bg-dark-img {
+  height: 180px;
+  overflow: hidden;
+  border-radius: 8px;
+  background-color: #000 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card .bg-dark-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+  border-radius: 8px;
+  display: block;
+}
+
+.card .bg-light img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* Botón principal */
+.btn-dark, .btn-outline-dark {
+  background-color: #1E90FF !important;
+  border-color: #1E90FF !important;
+  color: #fff !important;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+.btn-dark:hover, .btn-outline-dark:hover {
+  background-color: #39FF14 !important;
+  border-color: #39FF14 !important;
+  color: #000 !important;
+}
+
+/* Títulos y acentos */
+h1, h2, .fw-bold {
+  color: #39FF14 !important;
+  text-shadow: 0 0 8px #1E90FF;
+}
+
+/* Footer - más oscuro */
+footer {
+  background-color: #181a20 !important;
+  border-top: 2px solid #39FF14;
+  color: #e0e0e0 !important;
+  box-shadow: 0 0 24px #1E90FF22;
+}
+
+footer a {
+  color: #1E90FF !important;
+  text-decoration: underline;
+}
+
+footer a:hover {
+  color: #39FF14 !important;
+}
+
+/* Inputs y formulario newsletter */
+input[type="email"] {
+  background-color: #222;
+  color: #e0e0e0;
+  border: 1px solid #1E90FF;
+}
+
+input[type="email"]:focus {
+  border-color: #39FF14;
+  box-shadow: 0 0 5px #39FF14;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .navbar-brand img {
+    width: 40px;
+    height: 40px;
+  }
+  h1 {
+    font-size: 2rem;
+  }
+  h2 {
+    font-size: 1.5rem;
+  }
+}
+
+/* Carousel arrow styles */
+.carousel-control-prev,
+.carousel-control-next {
+  width: 7%;
+  min-width: 48px;
+  height: 100%;
+  top: 0;
+  bottom: 0;
+  opacity: 1;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-color: #e0e0e0;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #222;
+  width: 48px;
+  height: 48px;
+  background-size: 60% 60%;
+}
+
+/* Optional: make arrows more visible on dark backgrounds */
+.carousel-control-prev-icon {
+  filter: drop-shadow(0 0 2px #fff);
+}
+.carousel-control-next-icon {
+  filter: drop-shadow(0 0 2px #fff);
+}
+
+.banners-laterales {
+  margin-top: 70px; /* Ajusta según la altura del navbar y hero */
+}
+.bg-dark-blur {
+  background: #181818e6;
+  backdrop-filter: blur(2px);
+  border-radius: 18px;
+}
+
+/* Fondo gamer oscuro para columnas laterales y central */
+.bg-gamer-dark {
+  background: linear-gradient(135deg, #18181b 0%, #23272f 100%);
+  min-height: 100vh;
+  border-radius: 0;
+  box-shadow: 0 0 24px #0f0f0f88;
+}
+
+.nav-item.dropdown:hover .dropdown-menu {
+  display: block;
+  margin-top: 0;
+}
+.dropdown-menu {
+  background-color: #212529; /* oscuro */
+}
+.dropdown-item.text-light:hover {
+  background-color: #343a40;
+  color: #fff;
+}
+
+.detalle-img {
+  max-width: 350px;
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto 1rem auto;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.descripcion-marco {
+  background: #23272f;
+  color: #e0e0e0;
+  border-radius: 10px;
+  border: 2px solid #39FF14;
+  padding: 1rem 1.5rem;
+  margin: 1.5rem 0;
+  box-shadow: 0 2px 8px rgba(30,144,255,0.08);
+  font-size: 1.1rem;
+}
+
+.carrito-container.vacio {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+/* Eliminar fondo general duplicado */
+
+/* Sidebar */
+.sidebar-admin {
+  background: #23272f;
+  min-height: 100vh;
+  color: #e0e0e0;
+  padding-top: 1.5rem;
+  border-right: 1px solid #d1d5db;
+  position: relative;
+}
+
+.sidebar-admin .nav-link {
+  color: #e0e0e0;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.sidebar-admin .nav-link.active,
+.sidebar-admin .nav-link:hover {
+  background: #1e2127;
+  color: #39FF14;
+}
+
+/* Make the page content stretch so footer stays at the bottom when content is short.
+   The placeholder #include-admin-footer is a direct child of <body> so give it auto margin
+   to push the footer to the bottom in the document flex layout. */
+body > .container-fluid {
+  flex: 1 0 auto;
+}
+
+#include-admin-footer {
+  margin-top: auto;
+}
+
+/* Fallback helper class — if the footer fragment itself is used as the flex child. */
+footer.sticky-footer {
+  margin-top: auto !important;
+}
+
+.sidebar-admin .sidebar-footer {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 0;
+  width: 100%;
+  text-align: center;
+}
+
+.admin-logo {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 1rem;
+}
+
+/* Header */
+.admin-header {
+  background: #fff;
+  border-bottom: 1px solid #d1d5db;
+  padding: 1.5rem 2rem 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Content */
+.admin-content {
+  padding: 2rem;
+  min-height: 60vh;
+  background: #fff;
+  border-radius: 12px;
+  margin: 2rem;
+  box-shadow: 0 2px 12px #0001;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar-admin {
+    min-height: auto;
+    position: static;
+    border-right: none;
+  }
+  .admin-content {
+    margin: 1rem 0.5rem;
+    padding: 1rem;
+  }
+}
+/* Sidebar principal y footer alineados */
+.sidebar-admin {
+  background: #23272f;
+  color: #e0e0e0;
+  min-height: 100vh;
+  border-right: 1px solid #d1d5db;
+  display: flex;
+  flex-direction: column;
+  padding-top: 1.5rem;
+}
+
+.sidebar-admin .nav-link {
+  color: #e0e0e0;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.sidebar-admin .nav-link.active,
+.sidebar-admin .nav-link:hover {
+  background: #1e2127;
+  color: #39FF14;
+}
+
+.sidebar-footer {
+  margin-bottom: 1.5rem;
+}
+
+/* Sub-menú de productos sobrio */
+.admin-menu-producto {
+  background: #f4f6fa;
+  border-left: 1px solid #d1d5db;
+  min-height: 100vh;
+  padding-top: 2rem;
+}
+
+.menu-producto-link {
+  color: #23272f;
+  background: transparent;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  transition: background 0.2s, color 0.2s;
+  font-size: 1.05rem;
+  padding: 0.75rem 1rem;
+  letter-spacing: 0.5px;
+}
+
+.menu-producto-link.active,
+.menu-producto-link:hover {
+  background: #e9ecef;
+  color: #212529 !important;
+}
+
+/* Título principal sobrio */
+.admin-header h3 {
+  color: #212529 !important;
+  text-shadow: none !important;
+}
+/* Sub-menú de productos: fondo claro, texto oscuro, buen contraste */
+.admin-menu-producto {
+  background: #f4f6fa;
+  border-left: 1px solid #d1d5db;
+  min-height: 100vh;
+  padding-top: 2rem;
+}
+
+.admin-menu-producto .nav-link.menu-producto-link {
+  color: #212529 !important; /* texto oscuro */
+  background: transparent;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  border-radius: 6px;
+  font-size: 1.08rem;
+  padding: 0.75rem 1rem;
+  letter-spacing: 0.5px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.admin-menu-producto .nav-link.menu-producto-link.active,
+.admin-menu-producto .nav-link.menu-producto-link:hover {
+  background: #e0e0e0;
+  color: #111 !important;
+  text-decoration: none;
+}
+
+/* Título del formulario admin, sobrio y legible */
+.card .form-title-admin {
+  color: #212529;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  text-shadow: none;
+}
+
+/* Corrige el fondo oscuro en inputs autofill (Chrome, Edge, Safari) */
+input:-webkit-autofill,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 100px #f8f9fa inset !important;
+  box-shadow: 0 0 0 100px #f8f9fa inset !important;
+  -webkit-text-fill-color: #212529 !important;
+  color: #212529 !important;
+  caret-color: #212529 !important;
+}
+
+/* ...en src/styles/style.css... */
+#lista-carrito .carrito-item {
+  display: flex;
+  align-items: center;
+  background: #343a40;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  padding: 12px;
+}
+.carrito-item img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 16px;
+  background: #fff;
+}
+.carrito-item-info {
+  flex: 1;
+}
+.cantidad-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.cantidad-btn {
+  background: #23272b;
+  color: #39FF14;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.cantidad-btn:active {
+  background: #39FF14;
+  color: #23272b;
+}
+
+/* Caja clara para productos y totales */
+.caja-clara {
+  background: #f8f9fa !important;
+  color: #23272b !important;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  display: flex;
+  align-items: center;
+}
+.nombre-producto {
+  color: #23272b !important;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+.caja-precio {
+  background: #fff !important;
+  color: #23272b !important;
+  border-radius: 8px;
+  padding: 8px 16px;
+  display: inline-block;
+  font-weight: bold;
+  margin-top: 8px;
+}
+
+html, body {
+  height: 100%;
+}
+
+main {
+  flex: 1 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Asegura que el contenido principal ocupe el alto disponible */
+.container-fluid, .row {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+footer {
+  width: 100%;
+  background: #23272b;
+  color: #fff;
+  border-top: 2px solid #39FF14;
+  box-shadow: 0 0 24px #1E90FF22;
+  flex-shrink: 0;
+}
+
+.detalle-img {
+  max-width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+/* Eliminado duplicado html, body */
+/* Eliminado duplicados y reglas innecesarias */
+.caja-detalle {
+  background: #23272b;         /* Gris oscuro */
+  color: #f8f9fa;              /* Letras claras */
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+  padding: 32px 24px;
+}
+.caja-detalle h2,
+.caja-detalle .text-secondary {
+  color: blanchedalmond !important;   /* Verde neón para títulos y descripciones */
+}
+.caja-detalle .btn-success {
+  background: #39FF14;
+  color: #23272b;
+  border: none;
+}
+.caja-detalle .btn-success:hover {
+  background: #28b40c;
+  color: #fff;
+}
+.caja-detalle .badge.bg-success {
+  background: #39FF14 !important;
+  color: #23272b !important;
+}
+
+@media (max-width: 576px) {
+  .card {
+    max-width: 98vw !important;
+    padding: 1rem !important;
+  }
+}

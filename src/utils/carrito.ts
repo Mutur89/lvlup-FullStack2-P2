@@ -203,7 +203,7 @@ export function initCarrito(options?: CarritoOptions): void {
     });
   }
 
-  // Inicializar
+  // Inicializa
   loadCarrito();
   renderCarrito();
 }

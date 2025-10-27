@@ -1,0 +1,234 @@
+// src/pages/admin/AdminNuevoUsuario.tsx
+import { useState, FormEvent } from 'react';
+import { Link } from 'react-router-dom';
+
+const AdminNuevoUsuario = () => {
+  const [formData, setFormData] = useState({
+    nombres: '',
+    apellidos: '',
+    correo: '',
+    rol: '',
+    contraseña: '',
+    confirmar: '',
+    telefono: '',
+    region: '',
+    comuna: ''
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.id]: e.target.value
+    });
+  };
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    
+    // Validaciones básicas
+    if (formData.contraseña.length < 8) {
+      alert('La contraseña debe tener al menos 8 caracteres');
+      return;
+    }
+
+    if (formData.contraseña !== formData.confirmar) {
+      alert('Las contraseñas no coinciden');
+      return;
+    }
+
+    // Tu compañero agregará la lógica de guardado aquí
+    console.log('Usuario a crear:', formData);
+    alert('Usuario registrado (funcionalidad pendiente)');
+  };
+
+  return (
+    <main className="col px-0">
+      {/* Submenu */}
+      <aside className="d-flex border-bottom bg-light py-3 px-3">
+        <ul className="nav">
+          <li className="nav-item">
+            <Link className="nav-link active" to="/admin/usuarios/nuevo">
+              Nuevo Usuario
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link className="nav-link" to="/admin/usuarios/editar">
+              Editar Usuario
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link className="nav-link" to="/admin/usuarios">
+              Mostrar Usuarios
+            </Link>
+          </li>
+        </ul>
+      </aside>
+
+      <header className="admin-header p-4 bg-white border-bottom">
+        <h3 className="fw-bold mb-0 text-dark">Nuevo Usuario</h3>
+      </header>
+
+      <section className="admin-content d-flex justify-content-center align-items-center py-5" style={{ minHeight: '60vh' }}>
+        <div className="card shadow-sm p-4" style={{ maxWidth: '600px', width: '100%', background: '#f8f9fa' }}>
+          <h5 className="fw-bold mb-4">Registro de usuario</h5>
+          
+          <form onSubmit={handleSubmit}>
+            <div className="mb-3">
+              <label htmlFor="nombres" className="form-label">
+                NOMBRES
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="nombres"
+                autoComplete="given-name"
+                value={formData.nombres}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="apellidos" className="form-label">
+                APELLIDOS
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="apellidos"
+                autoComplete="family-name"
+                value={formData.apellidos}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="correo" className="form-label">
+                CORREO
+              </label>
+              <input
+                type="email"
+                className="form-control"
+                id="correo"
+                autoComplete="email"
+                value={formData.correo}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="rol" className="form-label">
+                ROL
+              </label>
+              <select
+                className="form-select"
+                id="rol"
+                value={formData.rol}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Seleccione un rol</option>
+                <option value="admin">Administrador</option>
+                <option value="vendedor">Vendedor</option>
+                <option value="visualizador">Visualizador</option>
+              </select>
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="contraseña" className="form-label">
+                CONTRASEÑA
+              </label>
+              <input
+                type="password"
+                className="form-control"
+                id="contraseña"
+                autoComplete="new-password"
+                value={formData.contraseña}
+                onChange={handleChange}
+                required
+              />
+              <div className="form-text">Mínimo 8 caracteres.</div>
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="confirmar" className="form-label">
+                CONFIRMAR CONTRASEÑA
+              </label>
+              <input
+                type="password"
+                className="form-control"
+                id="confirmar"
+                autoComplete="new-password"
+                value={formData.confirmar}
+                onChange={handleChange}
+                required
+              />
+              <div className="form-text">Repite la contraseña.</div>
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="telefono" className="form-label">
+                TELÉFONO (opcional)
+              </label>
+              <input
+                type="tel"
+                className="form-control"
+                id="telefono"
+                value={formData.telefono}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="row mb-3">
+              <div className="col-md-6">
+                <label htmlFor="region" className="form-label">
+                  Región
+                </label>
+                <select
+                  className="form-select"
+                  id="region"
+                  value={formData.region}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Seleccione la región...</option>
+                  <option>Región Metropolitana de Santiago</option>
+                  <option>Región de Valparaíso</option>
+                  <option>Región de Biobío</option>
+                </select>
+              </div>
+
+              <div className="col-md-6">
+                <label htmlFor="comuna" className="form-label">
+                  Comuna
+                </label>
+                <select
+                  className="form-select"
+                  id="comuna"
+                  value={formData.comuna}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Seleccione la comuna...</option>
+                  <option>Las Condes</option>
+                  <option>Maipú</option>
+                  <option>Concepción</option>
+                </select>
+              </div>
+            </div>
+
+            <button type="submit" className="btn btn-dark w-100 mt-2">
+              REGISTRAR
+            </button>
+
+            <div className="validation-errors text-danger mt-2" aria-live="polite"></div>
+          </form>
+        </div>
+      </section>
+    </main>
+  );
+};
+
+export default AdminNuevoUsuario;

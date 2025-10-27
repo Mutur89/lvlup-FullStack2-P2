@@ -1,7 +1,46 @@
 // src/pages/client/Home.tsx
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { products } from '../../data/products';
+
+// Función para obtener productos aleatorios sin repetir
+const obtenerProductosAleatorios = (cantidad: number) => {
+  const copia = [...products];
+  const resultado = [];
+  while (resultado.length < cantidad && copia.length > 0) {
+    const idx = Math.floor(Math.random() * copia.length);
+    resultado.push(copia.splice(idx, 1)[0]);
+  }
+  return resultado;
+};
 
 const Home = () => {
+  const [productosDestacados, setProductosDestacados] = useState<any[]>([]);
+  const [grupoActual, setGrupoActual] = useState(0);
+  
+  // Inicializar 20 productos aleatorios (5 grupos de 4)
+  useEffect(() => {
+    const productosAleatorios = obtenerProductosAleatorios(20);
+    setProductosDestacados(productosAleatorios);
+  }, []);
+
+  // Cambiar de grupo cada 5 segundos
+  useEffect(() => {
+    if (productosDestacados.length === 0) return;
+
+    const intervalo = setInterval(() => {
+      setGrupoActual((prev) => (prev + 1) % 5); // 5 grupos (0-4)
+    }, 5000); // 5 segundos
+
+    return () => clearInterval(intervalo);
+  }, [productosDestacados]);
+
+  // Obtener los 4 productos del grupo actual
+  const productosActuales = productosDestacados.slice(
+    grupoActual * 4,
+    grupoActual * 4 + 4
+  );
+
   return (
     <div className="container-fluid">
       <div className="row">
@@ -39,7 +78,7 @@ const Home = () => {
                 </div>
                 
                 <div className="col-md-6">
-                  {/* CARRUSEL */}
+                  {/* CARRUSEL DE CATEGORÍAS */}
                   <div 
                     className="bg-light border rounded" 
                     style={{ height: '250px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}
@@ -133,20 +172,82 @@ const Home = () => {
             </div>
           </section>
 
-          {/* SECTION - Productos destacados */}
+          {/* SECTION - Productos destacados con carrusel automático */}
           <section className="py-5 bg-dark-blur text-light" id="productos">
             <div className="container">
-              <h2 className="mb-4 fw-bold">Productos destacados del Mes</h2>
-              {/* ARTICLE */}
+              <div className="d-flex justify-content-between align-items-center mb-4">
+                <h2 className="fw-bold mb-0">Productos destacados del Mes</h2>
+                <div className="d-flex gap-2">
+                  {[0, 1, 2, 3, 4].map((index) => (
+                    <button
+                      key={index}
+                      className={`btn btn-sm ${
+                        grupoActual === index ? 'btn-success' : 'btn-outline-success'
+                      }`}
+                      style={{ width: '30px', height: '30px', padding: 0 }}
+                      onClick={() => setGrupoActual(index)}
+                      aria-label={`Grupo ${index + 1}`}
+                    >
+                      {index + 1}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* ARTICLE - Grid de productos */}
               <article>
                 <div className="row g-4" id="destacados">
-                  {/* Aquí tu colega inyectará los productos dinámicamente */}
-                  <div className="col-12 text-center py-5">
-                    <p className="text-muted">Los productos se cargarán aquí...</p>
-                    <p className="text-muted small">(Tu colega agregará la lógica para mostrar productos)</p>
-                  </div>
+                  {productosActuales.length > 0 ? (
+                    productosActuales.map((producto) => (
+                      <div key={producto.id} className="col-6 col-md-4 col-lg-3">
+                        <div className="card h-100 bg-dark text-light border-success">
+                          <div 
+                            className="bg-light d-flex align-items-center justify-content-center p-2"
+                            style={{ height: '180px' }}
+                          >
+                            <img 
+                              src={producto.imagen} 
+                              alt={producto.nombre}
+                              className="img-fluid"
+                              style={{ 
+                                maxHeight: '170px', 
+                                maxWidth: '100%',
+                                objectFit: 'contain' 
+                              }}
+                            />
+                          </div>
+                          <div className="card-body d-flex flex-column">
+                            <h5 className="card-title text-success">{producto.nombre}</h5>
+                            <p className="card-text text-muted small flex-grow-1">
+                              {producto.descripcion.slice(0, 60)}...
+                            </p>
+                            <p className="fw-bold text-success mb-2">
+                              ${producto.precio.toLocaleString('es-CL')} CLP
+                            </p>
+                            <Link
+                              to={`/detalle-producto?id=${producto.id}`}
+                              className="btn btn-success w-100"
+                            >
+                              Ver detalle
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="col-12 text-center py-5">
+                      <p className="text-muted">Cargando productos destacados...</p>
+                    </div>
+                  )}
                 </div>
               </article>
+
+              {/* Indicador de progreso del carrusel */}
+              <div className="mt-4 text-center">
+                <small className="text-muted">
+                  Grupo {grupoActual + 1} de 5 • Cambio automático cada 5 segundos
+                </small>
+              </div>
             </div>
           </section>
         </section>

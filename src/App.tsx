@@ -4,89 +4,63 @@ import Layout from './components/layout/Layout';
 import AdminLayout from './components/admin/AdminLayout';
 import Home from './pages/client/Home';
 import Contacto from './pages/client/Contacto';
+import Blog from './pages/client/Blog';
+import Nosotros from './pages/client/Nosotros';
+import Productos from './pages/client/Productos';
+import DetalleProducto from './pages/client/DetalleProducto';
+import Carrito from './pages/client/Carrito';
+import Login from './pages/client/Login';
+import Registro from './pages/client/Registro';
+import { CartProvider } from './context/CartContext';
 
-// Páginas placeholder (temporales) - Tu colega las completará con lógica
-const ProductosPage = () => (
-  <div className="container mt-5">
-    <h1>📦 Productos</h1>
-    <p className="lead">Página en construcción...</p>
-    <p className="text-muted">Tu colega agregará la lógica para mostrar productos aquí.</p>
-  </div>
-);
-
-const CarritoPage = () => (
-  <div className="container mt-5">
-    <h1>🛒 Carrito de Compras</h1>
-    <p className="lead">Página en construcción...</p>
-    <p className="text-muted">Tu colega agregará la lógica del carrito aquí.</p>
-  </div>
-);
-
-const NosotrosPage = () => (
-  <div className="container mt-5">
-    <h1>👥 Nosotros</h1>
-    <p className="lead">Página en construcción...</p>
-  </div>
-);
-
-const BlogPage = () => (
-  <div className="container mt-5">
-    <h1>📝 Blog</h1>
-    <p className="lead">Página en construcción...</p>
-  </div>
-);
-
-const ContactoPage = () => (
-  <div className="container mt-5">
-    <h1>📧 Contacto</h1>
-    <p className="lead">Página en construcción...</p>
-  </div>
-);
-
-const LoginPage = () => (
-  <div className="container mt-5">
-    <h1>🔐 Iniciar Sesión</h1>
-    <p className="lead">Página en construcción...</p>
-  </div>
-);
-
-const RegistroPage = () => (
-  <div className="container mt-5">
-    <h1>📝 Registro</h1>
-    <p className="lead">Página en construcción...</p>
-  </div>
-);
-
-const AdminDashboard = () => (
-  <div className="container-fluid">
-    <h1>📊 Dashboard Admin</h1>
-    <p className="lead">Panel de administración en construcción...</p>
-  </div>
-);
+// Admin Pages
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminProductos from './pages/admin/AdminProductos';
+import AdminNuevoProducto from './pages/admin/AdminNuevoProducto';
+import AdminEditarProducto from './pages/admin/AdminEditarProducto';
+import AdminMostrarProductos from './pages/admin/AdminMostrarProductos';
+import AdminUsuarios from './pages/admin/AdminUsuarios';
+import AdminNuevoUsuario from './pages/admin/AdminNuevoUsuario';
+import AdminEditarUsuario from './pages/admin/AdminEditarUsuario';
+import AdminMostrarUsuarios from './pages/admin/AdminMostrarUsuarios';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Rutas del sitio cliente - Usan el Layout con Header y Footer */}
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path="productos" element={<ProductosPage />} />
-          <Route path="carrito" element={<CarritoPage />} />
-          <Route path="nosotros" element={<NosotrosPage />} />
-          <Route path="blog" element={<BlogPage />} />
-          <Route path="contacto" element={<Contacto />} />
-          <Route path="login" element={<LoginPage />} />
-          <Route path="registro" element={<RegistroPage />} />
-        </Route>
+    <CartProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Rutas del sitio cliente - Usan el Layout con Header y Footer */}
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Home />} />
+            <Route path="productos" element={<Productos />} />
+            <Route path="detalle-producto" element={<DetalleProducto />} />
+            <Route path="carrito" element={<Carrito />} />
+            <Route path="nosotros" element={<Nosotros />} />
+            <Route path="blog" element={<Blog />} />
+            <Route path="contacto" element={<Contacto />} />
+            <Route path="login" element={<Login />} />
+            <Route path="registro" element={<Registro />} />
+          </Route>
 
-        {/* Rutas del panel admin - Usan el AdminLayout con Sidebar */}
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<AdminDashboard />} />
-          {/* Aquí agregarás más rutas admin cuando migres esas páginas */}
-        </Route>
-      </Routes>
-    </BrowserRouter>
+          {/* Rutas del panel admin - Usan el AdminLayout con Sidebar */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            
+            {/* Rutas de productos */}
+            <Route path="productos" element={<AdminProductos />} />
+            <Route path="productos/nuevo" element={<AdminNuevoProducto />} />
+            <Route path="productos/editar" element={<AdminEditarProducto />} />
+            <Route path="productos/mostrar" element={<AdminMostrarProductos />} />
+            
+            {/* Rutas de usuarios */}
+            <Route path="usuarios" element={<AdminUsuarios />} />
+            <Route path="usuarios/nuevo" element={<AdminNuevoUsuario />} />
+            <Route path="usuarios/editar" element={<AdminEditarUsuario />} />
+            <Route path="usuarios/mostrar" element={<AdminMostrarUsuarios />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </CartProvider>
   );
 }
 

@@ -234,7 +234,7 @@ export const products: Product[] = [
     id: 'MP1',
     nombre: 'SteelSeries QcK',
     categoria: 'Mousepad',
-    imagen: 'https://microless.com/cdn/products/2d48b044a4f60226f8fa02b8208c0a9e-hi.jpg',
+    imagen: 'https://cl-cenco-pim-resizer.ecomm.cencosud.com/unsafe/adaptive-fit-in/640x0/filters:quality(75)/prd-cl/product-medias/e978782a-30c3-43cc-9644-fdad5ae3b8d9/MKPCSC3HZ2/MKPCSC3HZ2-1/1727099423572-MKPCSC3HZ2-1-1.jpg',
     descripcion: 'Superficie de tela microtejida para precisión y control en cada movimiento.',
     precio: 12990,
     stock: 10

@@ -13,12 +13,7 @@
     "bootstrap-icons": "^1.13.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-<<<<<<< HEAD
-    "react-router-dom": "^7.9.4",
-    "typeScript": "npm:typescript@^5.9.3"
-=======
     "react-router-dom": "^7.9.4"
->>>>>>> b5bfb3021b00bee6eac9fb358236a059e32b770e
   },
   "devDependencies": {
     "@types/react": "^19.2.2",

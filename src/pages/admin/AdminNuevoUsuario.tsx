@@ -1,45 +1,66 @@
 // src/pages/admin/AdminNuevoUsuario.tsx
-import { useState, FormEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, FormEvent } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { createUser } from "../../utils/userService";
+import { comunasPorRegion } from "../../utils/comunas";
 
 const AdminNuevoUsuario = () => {
   const [formData, setFormData] = useState({
-    nombres: '',
-    apellidos: '',
-    correo: '',
-    rol: '',
-    contraseña: '',
-    confirmar: '',
-    telefono: '',
-    region: '',
-    comuna: ''
+    nombres: "",
+    apellidos: "",
+    correo: "",
+    rol: "",
+    contraseña: "",
+    confirmar: "",
+    telefono: "",
+    region: "",
+    comuna: "",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setFormData({
       ...formData,
-      [e.target.id]: e.target.value
+      [e.target.id]: e.target.value,
     });
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     // Validaciones básicas
     if (formData.contraseña.length < 8) {
-      alert('La contraseña debe tener al menos 8 caracteres');
+      alert("La contraseña debe tener al menos 8 caracteres");
       return;
     }
 
     if (formData.contraseña !== formData.confirmar) {
-      alert('Las contraseñas no coinciden');
+      alert("Las contraseñas no coinciden");
       return;
     }
 
-    // Tu compañero agregará la lógica de guardado aquí
-    console.log('Usuario a crear:', formData);
-    alert('Usuario registrado (funcionalidad pendiente)');
+    // Normalizar y crear usuario
+    const payload = {
+      nombres: formData.nombres,
+      apellidos: formData.apellidos,
+      correo: formData.correo,
+      rol: formData.rol,
+      telefono: formData.telefono,
+      region: formData.region,
+      comuna: formData.comuna,
+    };
+    try {
+      const created = createUser(payload);
+      console.log("Usuario creado:", created);
+      alert("Usuario registrado: " + (created.correo || created.id));
+      navigate("/admin/usuarios/mostrar");
+    } catch (err: any) {
+      alert(err?.message || "Error al crear usuario");
+    }
   };
+
+  const navigate = useNavigate();
 
   return (
     <main className="col px-0">
@@ -68,10 +89,16 @@ const AdminNuevoUsuario = () => {
         <h3 className="fw-bold mb-0 text-dark">Nuevo Usuario</h3>
       </header>
 
-      <section className="admin-content d-flex justify-content-center align-items-center py-5" style={{ minHeight: '60vh' }}>
-        <div className="card shadow-sm p-4" style={{ maxWidth: '600px', width: '100%', background: '#f8f9fa' }}>
+      <section
+        className="admin-content d-flex justify-content-center align-items-center py-5"
+        style={{ minHeight: "60vh" }}
+      >
+        <div
+          className="card shadow-sm p-4"
+          style={{ maxWidth: "600px", width: "100%", background: "#f8f9fa" }}
+        >
           <h5 className="fw-bold mb-4">Registro de usuario</h5>
-          
+
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label htmlFor="nombres" className="form-label">
@@ -194,9 +221,11 @@ const AdminNuevoUsuario = () => {
                   required
                 >
                   <option value="">Seleccione la región...</option>
-                  <option>Región Metropolitana de Santiago</option>
-                  <option>Región de Valparaíso</option>
-                  <option>Región de Biobío</option>
+                  {Object.keys(comunasPorRegion).map((r) => (
+                    <option key={r} value={r}>
+                      {r}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -212,9 +241,11 @@ const AdminNuevoUsuario = () => {
                   required
                 >
                   <option value="">Seleccione la comuna...</option>
-                  <option>Las Condes</option>
-                  <option>Maipú</option>
-                  <option>Concepción</option>
+                  {(comunasPorRegion[formData.region] || []).map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -223,7 +254,10 @@ const AdminNuevoUsuario = () => {
               REGISTRAR
             </button>
 
-            <div className="validation-errors text-danger mt-2" aria-live="polite"></div>
+            <div
+              className="validation-errors text-danger mt-2"
+              aria-live="polite"
+            ></div>
           </form>
         </div>
       </section>

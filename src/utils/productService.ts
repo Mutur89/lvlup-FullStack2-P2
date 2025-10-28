@@ -55,4 +55,45 @@ export function deleteProduct(id: string): boolean {
   return true;
 }
 
+export type CartItem = { id: string; cantidad: number };
+
+/**
+ * Reduce stock for given cart items. Returns an object with success and failures.
+ */
+export function decrementStock(items: CartItem[]): {
+  success: boolean;
+  failed: { id: string; reason: string }[];
+} {
+  const list = getProducts();
+  const failures: { id: string; reason: string }[] = [];
+
+  // Check availability first
+  for (const it of items) {
+    const p = list.find((x) => x.id === it.id);
+    if (!p) {
+      failures.push({ id: it.id, reason: "Producto no encontrado" });
+      continue;
+    }
+    if (p.stock < it.cantidad) {
+      failures.push({ id: it.id, reason: "Stock insuficiente" });
+    }
+  }
+
+  if (failures.length > 0) {
+    return { success: false, failed: failures };
+  }
+
+  // Apply reductions
+  const newList = list.map((p) => {
+    const found = items.find((it) => it.id === p.id);
+    if (found) {
+      return { ...p, stock: Math.max(0, p.stock - found.cantidad) };
+    }
+    return p;
+  });
+
+  saveProducts(newList);
+  return { success: true, failed: [] };
+}
+
 export type { Product };

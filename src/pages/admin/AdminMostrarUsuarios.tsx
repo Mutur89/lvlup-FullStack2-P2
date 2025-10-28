@@ -1,6 +1,7 @@
 // src/pages/admin/AdminMostrarUsuarios.tsx
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { getUsers, deleteUser } from "../../utils/userService";
 
 interface Usuario {
   id?: string;
@@ -19,20 +20,16 @@ const AdminMostrarUsuarios = () => {
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
 
   useEffect(() => {
-    // Tu compañero agregará la lógica para cargar usuarios desde localStorage
-    // usando initListadoUsuarios de listadoUsuarios.ts
+    // Cargar usuarios desde userService
     cargarUsuarios();
   }, []);
 
   const cargarUsuarios = () => {
     try {
-      const usuariosLS = localStorage.getItem('usuarios');
-      if (usuariosLS) {
-        const usuariosData = JSON.parse(usuariosLS);
-        setUsuarios(usuariosData);
-      }
+      const usuariosData = getUsers();
+      setUsuarios(usuariosData);
     } catch (e) {
-      console.error('Error al cargar usuarios:', e);
+      console.error("Error al cargar usuarios:", e);
     }
   };
 
@@ -67,7 +64,7 @@ const AdminMostrarUsuarios = () => {
         {/* Card con listado de usuarios */}
         <article
           className="card mt-2"
-          style={{ minHeight: '350px', background: '#f8f9fa' }}
+          style={{ minHeight: "350px", background: "#f8f9fa" }}
         >
           <div className="card-body" id="listado-usuarios">
             {usuarios.length === 0 ? (
@@ -101,26 +98,26 @@ const AdminMostrarUsuarios = () => {
                   <tbody>
                     {usuarios.map((usuario) => (
                       <tr key={usuario.id || usuario.correo}>
-                        <td>{usuario.id || '-'}</td>
-                        <td>{usuario.nombre || '-'}</td>
-                        <td>{usuario.apellidos || '-'}</td>
-                        <td>{usuario.correo || '-'}</td>
-                        <td>{usuario.rut || '-'}</td>
-                        <td>{usuario.region || '-'}</td>
-                        <td>{usuario.comuna || '-'}</td>
-                        <td>{usuario.direccion || '-'}</td>
-                        <td>{usuario.telefono || '-'}</td>
+                        <td>{usuario.id || "-"}</td>
+                        <td>{usuario.nombre || "-"}</td>
+                        <td>{usuario.apellidos || "-"}</td>
+                        <td>{usuario.correo || "-"}</td>
+                        <td>{usuario.rut || "-"}</td>
+                        <td>{usuario.region || "-"}</td>
+                        <td>{usuario.comuna || "-"}</td>
+                        <td>{usuario.direccion || "-"}</td>
+                        <td>{usuario.telefono || "-"}</td>
                         <td>
                           <span
                             className={`badge ${
-                              usuario.rol === 'admin'
-                                ? 'bg-danger'
-                                : usuario.rol === 'vendedor'
-                                ? 'bg-warning'
-                                : 'bg-secondary'
+                              usuario.rol === "admin"
+                                ? "bg-danger"
+                                : usuario.rol === "vendedor"
+                                ? "bg-warning"
+                                : "bg-secondary"
                             }`}
                           >
-                            {usuario.rol || 'Cliente'}
+                            {usuario.rol || "Cliente"}
                           </span>
                         </td>
                         <td>
@@ -138,8 +135,17 @@ const AdminMostrarUsuarios = () => {
                                   `¿Eliminar usuario ${usuario.nombre}?`
                                 )
                               ) {
-                                // Tu compañero agregará la lógica de eliminación
-                                console.log('Eliminar usuario:', usuario.id);
+                                const ok = deleteUser(
+                                  usuario.id || usuario.correo || ""
+                                );
+                                if (ok) {
+                                  setUsuarios((prev) =>
+                                    prev.filter((u) => u !== usuario)
+                                  );
+                                  alert("Usuario eliminado");
+                                } else {
+                                  alert("No se pudo eliminar el usuario");
+                                }
                               }
                             }}
                           >

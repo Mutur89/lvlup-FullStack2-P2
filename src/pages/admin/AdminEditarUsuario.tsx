@@ -1,70 +1,128 @@
 // src/pages/admin/AdminEditarUsuario.tsx
-import { useState, FormEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, FormEvent, useEffect } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import { getUserByCorreo, updateUser } from "../../utils/userService";
+import { comunasPorRegion } from "../../utils/comunas";
 
 const AdminEditarUsuario = () => {
-  const [buscarNombre, setBuscarNombre] = useState('');
+  const [buscarCorreo, setBuscarCorreo] = useState("");
   const [usuarioEncontrado, setUsuarioEncontrado] = useState(false);
   const [formData, setFormData] = useState({
-    nombres: '',
-    apellidos: '',
-    correo: '',
-    rol: '',
-    contraseña: '',
-    confirmar: '',
-    telefono: '',
-    region: '',
-    comuna: ''
+    nombres: "",
+    apellidos: "",
+    correo: "",
+    rol: "",
+    contraseña: "",
+    confirmar: "",
+    telefono: "",
+    region: "",
+    comuna: "",
   });
 
   const handleBuscar = () => {
-    // Tu compañero agregará la lógica de búsqueda por nombre aquí
-    console.log('Buscando usuario:', buscarNombre);
-    
-    // Simulación de búsqueda exitosa
-    if (buscarNombre) {
+    // Buscar usuario por correo o nombre (buscamos por correo aquí)
+    console.log("Buscando usuario:", buscarCorreo);
+    if (!buscarCorreo) {
+      alert("Por favor ingresa un correo");
+      return;
+    }
+    const u = getUserByCorreo(buscarCorreo);
+    if (u) {
       setUsuarioEncontrado(true);
       setFormData({
-        nombres: buscarNombre,
-        apellidos: 'Apellido Ejemplo',
-        correo: 'usuario@ejemplo.com',
-        rol: 'admin',
-        contraseña: '',
-        confirmar: '',
-        telefono: '+56912345678',
-        region: 'Región Metropolitana de Santiago',
-        comuna: 'Las Condes'
+        nombres: u.nombre || u.nombres || "",
+        apellidos: u.apellidos || "",
+        correo: u.correo || "",
+        rol: u.rol || "",
+        contraseña: "",
+        confirmar: "",
+        telefono: u.telefono || "",
+        region: u.region || "",
+        comuna: u.comuna || "",
       });
-      alert('Usuario encontrado (funcionalidad pendiente)');
+      alert("Usuario encontrado");
     } else {
-      alert('Por favor ingresa un nombre');
+      alert("Usuario no encontrado");
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const correo = searchParams.get("correo");
+    if (correo) {
+      setBuscarCorreo(correo);
+      const u = getUserByCorreo(correo);
+      if (u) {
+        setUsuarioEncontrado(true);
+        setFormData({
+          nombres: u.nombre || u.nombres || "",
+          apellidos: u.apellidos || "",
+          correo: u.correo || "",
+          rol: u.rol || "",
+          contraseña: "",
+          confirmar: "",
+          telefono: u.telefono || "",
+          region: u.region || "",
+          comuna: u.comuna || "",
+        });
+      }
+    }
+  }, [searchParams]);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setFormData({
       ...formData,
-      [e.target.id]: e.target.value
+      [e.target.id]: e.target.value,
     });
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     // Validaciones
     if (formData.contraseña && formData.contraseña.length < 8) {
-      alert('La contraseña debe tener al menos 8 caracteres');
+      alert("La contraseña debe tener al menos 8 caracteres");
       return;
     }
 
     if (formData.contraseña !== formData.confirmar) {
-      alert('Las contraseñas no coinciden');
+      alert("Las contraseñas no coinciden");
       return;
     }
 
-    // Tu compañero agregará la lógica de actualización aquí
-    console.log('Usuario a actualizar:', formData);
-    alert('Usuario actualizado (funcionalidad pendiente)');
+    // Actualizar usuario usando userService
+    const payload = {
+      nombres: formData.nombres,
+      apellidos: formData.apellidos,
+      correo: formData.correo,
+      rol: formData.rol,
+      telefono: formData.telefono,
+      region: formData.region,
+      comuna: formData.comuna,
+    } as any;
+    // buscar usuario existente
+    const existing = getUserByCorreo(formData.correo);
+    if (!existing) {
+      alert("Usuario no encontrado para actualizar");
+      return;
+    }
+    const ok = updateUser({
+      ...payload,
+      id: existing.id,
+      correo: formData.correo,
+    });
+    if (ok) alert("Usuario actualizado");
+    else {
+      const conflict = getUserByCorreo(formData.correo);
+      if (conflict && conflict.id !== existing.id) {
+        alert("El correo ya está en uso por otro usuario");
+      } else {
+        alert("No se pudo actualizar el usuario");
+      }
+    }
   };
 
   return (
@@ -94,24 +152,30 @@ const AdminEditarUsuario = () => {
         <h3 className="fw-bold mb-0 text-dark">Editar Usuario</h3>
       </header>
 
-      <section className="admin-content d-flex justify-content-center align-items-center py-5" style={{ minHeight: '60vh' }}>
-        <div className="card shadow-sm p-4" style={{ maxWidth: '600px', width: '100%', background: '#f8f9fa' }}>
+      <section
+        className="admin-content d-flex justify-content-center align-items-center py-5"
+        style={{ minHeight: "60vh" }}
+      >
+        <div
+          className="card shadow-sm p-4"
+          style={{ maxWidth: "600px", width: "100%", background: "#f8f9fa" }}
+        >
           <h5 className="fw-bold mb-4">Editor de usuario</h5>
-          
+
           <form onSubmit={handleSubmit}>
-            {/* Campo de búsqueda por nombre */}
+            {/* Campo de búsqueda por correo */}
             <div className="mb-3">
-              <label htmlFor="buscarNombres" className="form-label">
-                NOMBRES
+              <label htmlFor="buscarCorreo" className="form-label">
+                CORREO
               </label>
               <div className="input-group">
                 <input
                   type="text"
                   className="form-control"
-                  id="buscarNombres"
-                  placeholder="Ingresa los nombres"
-                  value={buscarNombre}
-                  onChange={(e) => setBuscarNombre(e.target.value)}
+                  id="buscarCorreo"
+                  placeholder="Ingresa el correo"
+                  value={buscarCorreo}
+                  onChange={(e) => setBuscarCorreo(e.target.value)}
                 />
                 <button
                   type="button"
@@ -121,6 +185,22 @@ const AdminEditarUsuario = () => {
                   Buscar
                 </button>
               </div>
+            </div>
+
+            {/* Campo para editar nombre (nombres) */}
+            <div className="mb-3">
+              <label htmlFor="nombres" className="form-label">
+                NOMBRE
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="nombres"
+                value={formData.nombres}
+                onChange={handleChange}
+                disabled={!usuarioEncontrado}
+                required
+              />
             </div>
 
             {/* Campos del formulario (deshabilitados hasta buscar) */}
@@ -236,9 +316,11 @@ const AdminEditarUsuario = () => {
                   required
                 >
                   <option value="">Seleccione la región...</option>
-                  <option>Región Metropolitana de Santiago</option>
-                  <option>Región de Valparaíso</option>
-                  <option>Región de Biobío</option>
+                  {Object.keys(comunasPorRegion).map((r) => (
+                    <option key={r} value={r}>
+                      {r}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -255,9 +337,11 @@ const AdminEditarUsuario = () => {
                   required
                 >
                   <option value="">Seleccione la comuna...</option>
-                  <option>Las Condes</option>
-                  <option>Maipú</option>
-                  <option>Concepción</option>
+                  {(comunasPorRegion[formData.region] || []).map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -270,7 +354,10 @@ const AdminEditarUsuario = () => {
               ACTUALIZAR USUARIO
             </button>
 
-            <div className="validation-errors text-danger mt-2" aria-live="polite"></div>
+            <div
+              className="validation-errors text-danger mt-2"
+              aria-live="polite"
+            ></div>
           </form>
         </div>
       </section>

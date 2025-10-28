@@ -9,13 +9,13 @@ const AdminMostrarProductos = () => {
 
   const categorias = [
     "Juegos de Mesa",
-    "Consolas",
-    "Computadores Gamer",
-    "Sillas Gamer",
+    "Consola",
+    "Computador Gamer",
+    "Silla Gamer",
     "Accesorios",
     "Ropa",
     "Mouse",
-    "Mousepads",
+    "Mousepad",
   ];
 
   const handleCategoriaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {

@@ -1,65 +1,108 @@
 // src/pages/admin/AdminEditarProducto.tsx
-import { useState, FormEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, FormEvent, useEffect } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import { getProductById, updateProduct } from "../../utils/productService";
 
 const AdminEditarProducto = () => {
-  const [buscarId, setBuscarId] = useState('');
+  const [buscarId, setBuscarId] = useState("");
   const [productoEncontrado, setProductoEncontrado] = useState(false);
   const [formData, setFormData] = useState({
-    id: '',
-    nombre: '',
-    descripcion: '',
-    categoria: '',
-    precio: '',
-    stock: '',
-    imagen: ''
+    id: "",
+    nombre: "",
+    descripcion: "",
+    categoria: "",
+    precio: "",
+    stock: "",
+    imagen: "",
   });
 
   const categorias = [
-    { value: 'JM', label: 'Juegos de Mesa' },
-    { value: 'CO', label: 'Consolas' },
-    { value: 'PC', label: 'Computadores Gamer' },
-    { value: 'SG', label: 'Sillas Gamer' },
-    { value: 'AC', label: 'Accesorios' },
-    { value: 'RP', label: 'Ropa' },
-    { value: 'MS', label: 'Mouse' },
-    { value: 'MP', label: 'Mousepads' }
+    { value: "JM", label: "Juegos de Mesa" },
+    { value: "CO", label: "Consolas" },
+    { value: "PC", label: "Computadores Gamer" },
+    { value: "SG", label: "Sillas Gamer" },
+    { value: "AC", label: "Accesorios" },
+    { value: "RP", label: "Ropa" },
+    { value: "MS", label: "Mouse" },
+    { value: "MP", label: "Mousepads" },
   ];
 
   const handleBuscar = () => {
     // Tu compañero agregará la lógica de búsqueda por ID aquí
-    console.log('Buscando producto con ID:', buscarId);
-    
-    // Simulación de búsqueda exitosa
-    if (buscarId) {
+    console.log("Buscando producto con ID:", buscarId);
+    if (!buscarId) {
+      alert("Por favor ingresa un ID");
+      return;
+    }
+    const p = getProductById(buscarId);
+    if (p) {
       setProductoEncontrado(true);
       setFormData({
-        id: buscarId,
-        nombre: 'Producto Ejemplo',
-        descripcion: 'Descripción del producto',
-        categoria: 'JM',
-        precio: '29990',
-        stock: '10',
-        imagen: 'https://ejemplo.com/imagen.jpg'
+        id: p.id,
+        nombre: p.nombre,
+        descripcion: p.descripcion,
+        categoria: p.categoria,
+        precio: String(p.precio),
+        stock: String(p.stock),
+        imagen: p.imagen,
       });
-      alert('Producto encontrado (funcionalidad pendiente)');
+      alert("Producto encontrado");
     } else {
-      alert('Por favor ingresa un ID');
+      alert("Producto no encontrado");
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const id = searchParams.get("id");
+    if (id) {
+      setBuscarId(id);
+      const p = getProductById(id);
+      if (p) {
+        setProductoEncontrado(true);
+        setFormData({
+          id: p.id,
+          nombre: p.nombre,
+          descripcion: p.descripcion,
+          categoria: p.categoria,
+          precio: String(p.precio),
+          stock: String(p.stock),
+          imagen: p.imagen,
+        });
+      }
+    }
+  }, [searchParams]);
+
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     setFormData({
       ...formData,
-      [e.target.id]: e.target.value
+      [e.target.id]: e.target.value,
     });
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Tu compañero agregará la lógica de actualización aquí
-    console.log('Producto a actualizar:', formData);
-    alert('Producto actualizado (funcionalidad pendiente)');
+    const updated = {
+      id: formData.id,
+      nombre: formData.nombre,
+      descripcion: formData.descripcion,
+      categoria: formData.categoria,
+      precio: Number(formData.precio),
+      stock: Number(formData.stock),
+      imagen: formData.imagen,
+    };
+    const ok = updateProduct(updated as any);
+    if (ok) {
+      alert("Producto actualizado");
+    } else {
+      alert("No se pudo actualizar el producto");
+    }
   };
 
   return (
@@ -89,10 +132,16 @@ const AdminEditarProducto = () => {
         <h3 className="fw-bold mb-0 text-dark">Editor de Producto</h3>
       </header>
 
-      <section className="admin-content d-flex justify-content-center align-items-center py-5" style={{ minHeight: '60vh' }}>
-        <div className="card shadow-sm p-4" style={{ maxWidth: '600px', width: '100%', background: '#f8f9fa' }}>
+      <section
+        className="admin-content d-flex justify-content-center align-items-center py-5"
+        style={{ minHeight: "60vh" }}
+      >
+        <div
+          className="card shadow-sm p-4"
+          style={{ maxWidth: "600px", width: "100%", background: "#f8f9fa" }}
+        >
           <h5 className="fw-bold mb-4">Editor de producto</h5>
-          
+
           <form onSubmit={handleSubmit}>
             {/* Campo de búsqueda por ID */}
             <div className="mb-3">

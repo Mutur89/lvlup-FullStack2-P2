@@ -1,31 +1,50 @@
 // src/pages/admin/AdminMostrarProductos.tsx
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { getProducts, deleteProduct } from "../../utils/productService";
 
 const AdminMostrarProductos = () => {
-  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('');
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("");
   const [productos, setProductos] = useState<any[]>([]);
 
   const categorias = [
-    'Juegos de Mesa',
-    'Consolas',
-    'Computadores Gamer',
-    'Sillas Gamer',
-    'Accesorios',
-    'Ropa',
-    'Mouse',
-    'Mousepads'
+    "Juegos de Mesa",
+    "Consolas",
+    "Computadores Gamer",
+    "Sillas Gamer",
+    "Accesorios",
+    "Ropa",
+    "Mouse",
+    "Mousepads",
   ];
 
   const handleCategoriaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const categoria = e.target.value;
     setCategoriaSeleccionada(categoria);
-    
-    // Tu compañero agregará la lógica para filtrar productos por categoría
+
+    // Al cambiar categoría, filtramos los productos cargados
     if (categoria) {
-      console.log('Filtrando productos por categoría:', categoria);
-      // Aquí debería cargar los productos filtrados
+      const all = getProducts();
+      const filtered = all.filter((p) => p.categoria === categoria);
+      setProductos(filtered);
+    } else {
       setProductos([]);
+    }
+  };
+
+  useEffect(() => {
+    // Inicialmente no mostramos nada hasta seleccionar categoría
+  }, []);
+
+  const handleEliminar = (id: string) => {
+    if (!confirm("¿Eliminar producto? Esta acción no se puede deshacer."))
+      return;
+    const ok = deleteProduct(id);
+    if (ok) {
+      setProductos((prev) => prev.filter((p) => p.id !== id));
+      alert("Producto eliminado");
+    } else {
+      alert("No se pudo eliminar el producto");
     }
   };
 
@@ -84,7 +103,7 @@ const AdminMostrarProductos = () => {
         {/* Card con listado de productos */}
         <article
           className="card mt-2"
-          style={{ minHeight: '350px', background: '#f8f9fa' }}
+          style={{ minHeight: "350px", background: "#f8f9fa" }}
         >
           <div className="card-body" id="listado-productos">
             {!categoriaSeleccionada ? (
@@ -118,7 +137,7 @@ const AdminMostrarProductos = () => {
                       <tr key={producto.id}>
                         <td>{producto.id}</td>
                         <td>{producto.nombre}</td>
-                        <td>${producto.precio.toLocaleString('es-CL')}</td>
+                        <td>${producto.precio.toLocaleString("es-CL")}</td>
                         <td>{producto.stock}</td>
                         <td>
                           <Link
@@ -127,7 +146,10 @@ const AdminMostrarProductos = () => {
                           >
                             Editar
                           </Link>
-                          <button className="btn btn-sm btn-outline-danger">
+                          <button
+                            className="btn btn-sm btn-outline-danger"
+                            onClick={() => handleEliminar(producto.id)}
+                          >
                             Eliminar
                           </button>
                         </td>

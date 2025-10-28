@@ -1,40 +1,57 @@
 // src/pages/admin/AdminNuevoProducto.tsx
-import { useState, FormEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, FormEvent } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { createProduct } from "../../utils/productService";
 
 const AdminNuevoProducto = () => {
   const [formData, setFormData] = useState({
-    nombre: '',
-    descripcion: '',
-    categoria: '',
-    precio: '',
-    stock: '',
-    imagen: ''
+    nombre: "",
+    descripcion: "",
+    categoria: "",
+    precio: "",
+    stock: "",
+    imagen: "",
   });
+  const navigate = useNavigate();
 
   const categorias = [
-    'Juegos de Mesa',
-    'Consola',
-    'Computador Gamer',
-    'Silla Gamer',
-    'Accesorios',
-    'Ropa',
-    'Mouse',
-    'Mousepad'
+    "Juegos de Mesa",
+    "Consola",
+    "Computador Gamer",
+    "Silla Gamer",
+    "Accesorios",
+    "Ropa",
+    "Mouse",
+    "Mousepad",
   ];
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     setFormData({
       ...formData,
-      [e.target.id]: e.target.value
+      [e.target.id]: e.target.value,
     });
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Tu compañero agregará la lógica de guardado aquí
-    console.log('Producto a crear:', formData);
-    alert('Producto registrado (funcionalidad pendiente)');
+    // Convertir campos a tipos correctos
+    const payload = {
+      nombre: formData.nombre,
+      descripcion: formData.descripcion,
+      categoria: formData.categoria,
+      precio: Number(formData.precio),
+      stock: Number(formData.stock),
+      imagen: formData.imagen,
+    };
+
+    const created = createProduct(payload as any);
+    console.log("Producto creado:", created);
+    alert(`Producto creado con ID ${created.id}`);
+    navigate("/admin/productos/mostrar");
   };
 
   return (
@@ -64,10 +81,16 @@ const AdminNuevoProducto = () => {
         <h3 className="fw-bold mb-0 text-dark">Nuevo Producto</h3>
       </header>
 
-      <section className="admin-content d-flex justify-content-center align-items-center py-5" style={{ minHeight: '60vh' }}>
-        <div className="card shadow-sm p-4" style={{ maxWidth: '600px', width: '100%', background: '#f8f9fa' }}>
+      <section
+        className="admin-content d-flex justify-content-center align-items-center py-5"
+        style={{ minHeight: "60vh" }}
+      >
+        <div
+          className="card shadow-sm p-4"
+          style={{ maxWidth: "600px", width: "100%", background: "#f8f9fa" }}
+        >
           <h5 className="fw-bold mb-4">Registro de producto</h5>
-          
+
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label htmlFor="nombre" className="form-label">

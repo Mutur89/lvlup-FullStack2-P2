@@ -1,7 +1,7 @@
 // src/pages/client/Blog.tsx
-import { useState } from 'react';
-import BlogPost1 from '../../components/blog/BlogPost1';
-import BlogPost2 from '../../components/blog/BlogPost2';
+import { useState } from "react";
+import BlogPost1 from "../../components/Blog/BlogPost1";
+import BlogPost2 from "../../components/Blog/BlogPost2";
 
 const Blog = () => {
   const [activePost, setActivePost] = useState<1 | 2>(1);
@@ -12,14 +12,18 @@ const Blog = () => {
       <div className="container py-4">
         <div className="d-flex gap-2 justify-content-center mb-3">
           <button
-            className={`btn ${activePost === 1 ? 'btn-success' : 'btn-outline-success'}`}
+            className={`btn ${
+              activePost === 1 ? "btn-success" : "btn-outline-success"
+            }`}
             onClick={() => setActivePost(1)}
             aria-pressed={activePost === 1}
           >
             Juegos de Mesa
           </button>
           <button
-            className={`btn ${activePost === 2 ? 'btn-success' : 'btn-outline-success'}`}
+            className={`btn ${
+              activePost === 2 ? "btn-success" : "btn-outline-success"
+            }`}
             onClick={() => setActivePost(2)}
             aria-pressed={activePost === 2}
           >
@@ -31,9 +35,9 @@ const Blog = () => {
       {/* Contenedor del artículo */}
       <section className="py-5">
         <div className="container">
-          <div 
+          <div
             className="bg-black rounded shadow p-4 border border-success"
-            style={{ minHeight: '200px' }}
+            style={{ minHeight: "200px" }}
           >
             {activePost === 1 ? <BlogPost1 /> : <BlogPost2 />}
           </div>

@@ -50,6 +50,36 @@ export function getUserByCorreo(correo?: string): User | undefined {
   return getUsers().find((u) => u.correo === correo);
 }
 
+function encodePassword(password?: string) {
+  if (!password) return undefined;
+  try {
+    // uso simple de base64 para no guardar la contraseña en texto plano (cliente)
+    if (
+      typeof globalThis !== "undefined" &&
+      typeof (globalThis as any).btoa === "function"
+    ) {
+      return (globalThis as any).btoa(password);
+    }
+    // fallback: devolver la contraseña sin codificar (no ideal, pero evita errores en entornos sin btoa)
+    return password;
+  } catch {
+    return undefined;
+  }
+}
+
+export function authenticate(
+  correo?: string,
+  password?: string
+): User | undefined {
+  if (!correo || !password) return undefined;
+  const user = getUserByCorreo(correo);
+  if (!user) return undefined;
+  const enc = encodePassword(password);
+  // las contraseñas se guardan en la propiedad _pw
+  if (enc && user._pw && user._pw === enc) return user;
+  return undefined;
+}
+
 export function createUser(data: Partial<User>): User {
   const list = getUsers();
   // validar correo único
@@ -73,6 +103,10 @@ export function createUser(data: Partial<User>): User {
     telefono: data.telefono,
     rol: data.rol || "visualizador",
   };
+  // almacenar contraseña (codificada) si se entrega
+  if ((data as any).password) {
+    (user as any)._pw = encodePassword((data as any).password as string);
+  }
   list.push(user);
   saveUsers(list);
   return user;

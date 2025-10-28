@@ -633,3 +633,221 @@ footer {
     padding: 1rem !important;
   }
 }
+
+/* admin-override.css - Agregar al final de style.css o crear archivo separado */
+
+/* OVERRIDES PARA PANEL ADMIN - Vencer estilos globales del sitio */
+
+/* Fondo blanco para sección admin */
+#main-admin .admin-content {
+  background: #ffffff !important;
+  color: #212529 !important;
+}
+
+/* Cards en admin con fondo blanco */
+#main-admin .card {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  border: 1px solid #dee2e6 !important;
+  box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075) !important;
+}
+
+/* Textos oscuros en cards de admin */
+#main-admin .card p,
+#main-admin .card-text,
+#main-admin .card-body p {
+  color: #000000 !important;
+  font-weight: 600 !important;
+  text-shadow: none !important;
+}
+
+/* Labels y textos secundarios */
+#main-admin .text-muted {
+  color: #6c757d !important;
+}
+
+/* Títulos en admin sin efectos gamer */
+#main-admin h1,
+#main-admin h2,
+#main-admin h3,
+#main-admin h4,
+#main-admin h5 {
+  color: #212529 !important;
+  text-shadow: none !important;
+}
+
+/* Card body con fondo blanco */
+#main-admin .card-body {
+  background: #ffffff !important;
+  color: #212529 !important;
+}
+
+/* Iconos visibles */
+#main-admin .bi {
+  opacity: 1 !important;
+}
+
+/* Label verde para categoría */
+#main-admin label[for="categoria"] {
+  color: #28a745 !important;
+  font-weight: 700 !important;
+  font-size: 1.1rem !important;
+}
+
+/* Asegurar que los mensajes sean legibles */
+#listado-productos p {
+  color: #000000 !important;
+  font-weight: 700 !important;
+  text-shadow: none !important;
+}
+
+#listado-productos .text-muted {
+  color: #495057 !important;
+  font-weight: 500 !important;
+}
+
+/* Tabla con colores correctos */
+#main-admin table th {
+  color: #212529 !important;
+  background-color: #f8f9fa !important;
+}
+
+#main-admin table td {
+  color: #212529 !important;
+}
+
+/* Botones en admin mantienen su estilo Bootstrap normal */
+#main-admin .btn-outline-primary {
+  background-color: transparent !important;
+  border-color: #0d6efd !important;
+  color: #0d6efd !important;
+}
+
+#main-admin .btn-outline-danger {
+  background-color: transparent !important;
+  border-color: #dc3545 !important;
+  color: #dc3545 !important;
+}
+
+/* Forzar fondo claro y texto oscuro en submenu de admin */
+#main-admin aside {
+  background-color: #f8f9fa !important;
+  border-bottom: 2px solid #dee2e6 !important;
+}
+
+/* Links del submenu - TEXTO NEGRO FORZADO */
+#main-admin aside .nav a,
+#main-admin aside .nav-link,
+#main-admin aside a {
+  color: #212529 !important;
+  font-weight: 600 !important;
+  text-shadow: none !important;
+  background-color: transparent !important;
+}
+
+/* Link activo en azul con texto blanco */
+#main-admin aside .nav a[href*="mostrar"],
+#main-admin aside .nav-link.active {
+  background-color: #0d6efd !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+/* Hover en links no activos */
+#main-admin aside .nav a:hover:not([href*="mostrar"]) {
+  background-color: #e9ecef !important;
+  color: #000000 !important;
+}
+
+/* Label verde para "Escoger categoría" */
+#main-admin label[for="categoria"] {
+  color: #28a745 !important;
+  font-weight: 700 !important;
+  font-size: 1.1rem !important;
+  text-shadow: none !important;
+}
+
+/* Card con fondo blanco */
+#main-admin .card {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  border: 1px solid #dee2e6 !important;
+}
+
+/* Textos en cards - NEGRO */
+#main-admin .card p,
+#main-admin .card-body p,
+#main-admin .card-text {
+  color: #000000 !important;
+  font-weight: 700 !important;
+  text-shadow: none !important;
+}
+
+/* Textos secundarios - GRIS OSCURO */
+#main-admin .card p[style*="6c757d"] {
+  color: #495057 !important;
+  font-weight: 500 !important;
+}
+
+/* Headers de tabla */
+#main-admin table th {
+  color: #212529 !important;
+  font-weight: 600 !important;
+  background-color: #f8f9fa !important;
+  text-shadow: none !important;
+}
+
+/* Celdas de tabla */
+#main-admin table td {
+  color: #212529 !important;
+  text-shadow: none !important;
+}
+
+/* Iconos Bootstrap Icons en admin */
+#main-admin .bi {
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+/* Admin content - fondo blanco */
+#main-admin .admin-content {
+  background: #ffffff !important;
+  color: #212529 !important;
+}
+
+/* Headers sin efectos gamer */
+#main-admin h1,
+#main-admin h2, 
+#main-admin h3,
+#main-admin h4,
+#main-admin h5 {
+  color: #212529 !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -55,22 +55,85 @@ const AdminNuevoProducto = () => {
   };
 
   return (
-    <main className="col px-0">
-      {/* Submenu */}
-      <aside className="d-flex border-bottom bg-light py-3 px-3">
-        <ul className="nav">
-          <li className="nav-item">
-            <Link className="nav-link active" to="/admin/productos/nuevo">
+    <main id="main-admin" className="col px-0">
+      {/* Submenu - CON ESTILOS LEGIBLES */}
+      <aside 
+        style={{
+          backgroundColor: '#f8f9fa',
+          borderBottom: '2px solid #dee2e6',
+          padding: '1rem 1.5rem',
+          display: 'flex'
+        }}
+      >
+        <ul className="nav" style={{ gap: '0.5rem', display: 'flex', margin: 0, padding: 0, listStyle: 'none' }}>
+          <li>
+            <Link 
+              to="/admin/productos/nuevo"
+              style={{
+                color: '#ffffff',
+                fontWeight: '700',
+                fontSize: '1rem',
+                padding: '0.6rem 1.2rem',
+                backgroundColor: '#0d6efd',
+                borderRadius: '6px',
+                textDecoration: 'none',
+                display: 'block'
+              }}
+            >
               Nuevo Producto
             </Link>
           </li>
-          <li className="nav-item">
-            <Link className="nav-link" to="/admin/productos/editar">
+          <li>
+            <Link 
+              to="/admin/productos/editar"
+              style={{
+                color: '#212529',
+                fontWeight: '600',
+                fontSize: '1rem',
+                padding: '0.6rem 1.2rem',
+                backgroundColor: 'transparent',
+                borderRadius: '6px',
+                textDecoration: 'none',
+                display: 'block',
+                transition: 'all 0.2s',
+                border: '1px solid transparent'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#e9ecef';
+                e.currentTarget.style.borderColor = '#dee2e6';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.borderColor = 'transparent';
+              }}
+            >
               Editar Producto
             </Link>
           </li>
-          <li className="nav-item">
-            <Link className="nav-link" to="/admin/productos">
+          <li>
+            <Link 
+              to="/admin/productos/mostrar"
+              style={{
+                color: '#212529',
+                fontWeight: '600',
+                fontSize: '1rem',
+                padding: '0.6rem 1.2rem',
+                backgroundColor: 'transparent',
+                borderRadius: '6px',
+                textDecoration: 'none',
+                display: 'block',
+                transition: 'all 0.2s',
+                border: '1px solid transparent'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#e9ecef';
+                e.currentTarget.style.borderColor = '#dee2e6';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.borderColor = 'transparent';
+              }}
+            >
               Mostrar Productos
             </Link>
           </li>

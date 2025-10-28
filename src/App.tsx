@@ -16,6 +16,8 @@ import Perfil from "./pages/client/Perfil";
 import RequireAuth from "./components/RequireAuth";
 import { CartProvider } from "./context/CartContext";
 import { AuthProvider } from "./context/AuthContext";
+import { useEffect } from "react";
+import usersSeed from "./data/users";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -32,6 +34,18 @@ import AdminPedidoDetalle from "./pages/admin/AdminPedidoDetalle";
 import RequireAdmin from "./components/RequireAdmin";
 
 function App() {
+  useEffect(() => {
+    // Sembrar usuarios de ejemplo si no existen (solo en desarrollo/local)
+    try {
+      if (!localStorage.getItem("usuarios")) {
+        localStorage.setItem("usuarios", JSON.stringify(usersSeed));
+        // También aseguramos que la clave 'usuarios' exista para userService
+        console.log("Usuarios seed creados en localStorage");
+      }
+    } catch (err) {
+      /* ignore */
+    }
+  }, []);
   return (
     <AuthProvider>
       <CartProvider>

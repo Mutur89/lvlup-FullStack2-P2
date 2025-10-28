@@ -1,47 +1,48 @@
 // src/pages/client/Login.tsx
-import { useState, FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 const Login = () => {
-  const [correo, setCorreo] = useState('');
-  const [contraseña, setContraseña] = useState('');
-  const [error, setError] = useState('');
+  const [correo, setCorreo] = useState("");
+  const [contraseña, setContraseña] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const { login } = useAuth();
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     // Validaciones básicas
     if (!correo || !contraseña) {
-      setError('Por favor, completa todos los campos');
+      setError("Por favor, completa todos los campos");
       return;
     }
 
     // Validación de email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(correo)) {
-      setError('Por favor, ingresa un correo válido');
+      setError("Por favor, ingresa un correo válido");
       return;
     }
 
-    // TODO: Aquí tu compañero agregará la lógica de autenticación
-    // Por ahora, simulamos un login exitoso
-    console.log('Login attempt:', { correo, contraseña });
-    
-    // Simulación de login exitoso
-    localStorage.setItem('user', JSON.stringify({ correo }));
+    const ok = await login(correo, contraseña);
+    if (!ok) {
+      setError("Correo o contraseña incorrectos");
+      return;
+    }
+
     alert(`¡Bienvenido! Has iniciado sesión como ${correo}`);
-    
-    // Redirigir al home
-    navigate('/');
+    navigate("/");
   };
 
   return (
     <main>
       <section
         className="container d-flex flex-column align-items-center justify-content-center"
-        style={{ minHeight: '80vh' }}
+        style={{ minHeight: "80vh" }}
       >
         <img
           src="/logo-lvlup.png"
@@ -50,12 +51,14 @@ const Login = () => {
           height="120"
           className="mb-3"
         />
-        <h2 className="fw-bold text-success mb-4 text-center">Level-Up Gamer</h2>
+        <h2 className="fw-bold text-success mb-4 text-center">
+          Level-Up Gamer
+        </h2>
 
         {/* Card con el formulario de login */}
         <article
           className="card bg-dark text-light shadow-lg p-4"
-          style={{ maxWidth: '400px', width: '100%' }}
+          style={{ maxWidth: "400px", width: "100%" }}
         >
           <h5 className="fw-bold mb-3 text-success">Inicio de sesión</h5>
 
@@ -101,7 +104,7 @@ const Login = () => {
 
           <div className="text-center mt-3">
             <p className="text-muted small">
-              ¿No tienes cuenta?{' '}
+              ¿No tienes cuenta?{" "}
               <a href="/registro" className="text-success">
                 Regístrate aquí
               </a>

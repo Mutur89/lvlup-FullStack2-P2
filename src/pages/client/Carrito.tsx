@@ -1,5 +1,6 @@
 // src/pages/client/Carrito.tsx
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import { getProductById } from "../../data/products";
 import { decrementStock } from "../../utils/productService";
@@ -28,25 +29,15 @@ const Carrito = () => {
     }
   };
 
+  const navigate = useNavigate();
+
   const handleProcederCompra = () => {
     if (carrito.length === 0) {
       alert("Tu carrito está vacío");
       return;
     }
-    // Preparar items para decrementar stock
-    const items = carrito.map((c) => ({ id: c.id, cantidad: c.cantidad }));
-    const result = decrementStock(items);
-    if (!result.success) {
-      const reasons = result.failed
-        .map((f) => `${f.id}: ${f.reason}`)
-        .join("\n");
-      alert("No se pudo procesar la compra:\n" + reasons);
-      return;
-    }
-    alert("¡Gracias por tu compra!");
-    clearCart();
-    setDescuento(0);
-    setCupon("");
+    // Redirigir al checkout para completar datos del cliente y confirmar pago
+    navigate("/checkout");
   };
 
   const handleSumar = (productId: string) => {

@@ -4,8 +4,8 @@ import { renderHook, act } from "@testing-library/react";
 import { CartProvider, useCart } from "./CartContext";
 import { ReactNode } from "react";
 
-// Mock de getProductById
-vi.mock("../data/products", () => ({
+// Mock de productService (cambió la importación de data/products a utils/productService)
+vi.mock("../utils/productService", () => ({
   getProductById: vi.fn((id: string) => {
     const productos: any = {
       "PROD001": { id: "PROD001", nombre: "PS5", precio: 500000, stock: 10 },
@@ -31,7 +31,13 @@ Object.defineProperty(globalThis, "localStorage", {
   value: localStorageMock,
 });
 
+// Mock de alert
 globalThis.alert = vi.fn();
+
+// Mock de document.getElementById para updateCartCountInDOM
+globalThis.document.getElementById = vi.fn(() => ({
+  textContent: "",
+})) as any;
 
 // Wrapper para el provider
 const wrapper = ({ children }: { children: ReactNode }) => (

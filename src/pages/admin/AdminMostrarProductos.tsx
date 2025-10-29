@@ -24,6 +24,7 @@ const AdminMostrarProductos = () => {
 
     if (categoria) {
       const all = getProducts();
+      // ✅ NO FILTRAR POR STOCK - Mostrar todos los productos incluso con stock 0
       const filtered = all.filter((p) => p.categoria === categoria);
       setProductos(filtered);
     } else {
@@ -33,7 +34,22 @@ const AdminMostrarProductos = () => {
 
   useEffect(() => {
     // Inicialmente no mostramos nada hasta seleccionar categoría
-  }, []);
+    
+    // ✅ Escuchar cambios en productos
+    const handleProductsUpdate = () => {
+      if (categoriaSeleccionada) {
+        const all = getProducts();
+        const filtered = all.filter((p) => p.categoria === categoriaSeleccionada);
+        setProductos(filtered);
+      }
+    };
+
+    window.addEventListener("products.updated", handleProductsUpdate);
+    
+    return () => {
+      window.removeEventListener("products.updated", handleProductsUpdate);
+    };
+  }, [categoriaSeleccionada]);
 
   const handleEliminar = (id: string) => {
     if (!confirm("¿Eliminar producto? Esta acción no se puede deshacer."))
@@ -245,9 +261,31 @@ const AdminMostrarProductos = () => {
                   </thead>
                   <tbody>
                     {productos.map((producto) => (
-                      <tr key={producto.id}>
+                      <tr 
+                        key={producto.id}
+                        style={{
+                          // ✅ Indicar visualmente productos sin stock
+                          opacity: producto.stock === 0 ? 0.6 : 1,
+                          backgroundColor: producto.stock === 0 ? '#fff3cd' : 'transparent'
+                        }}
+                      >
                         <td style={{ color: '#6c757d' }}>{producto.id}</td>
-                        <td style={{ color: '#212529', fontWeight: '500' }}>{producto.nombre}</td>
+                        <td style={{ color: '#212529', fontWeight: '500' }}>
+                          {producto.nombre}
+                          {/* ✅ Indicador de agotado */}
+                          {producto.stock === 0 && (
+                            <span 
+                              className="badge ms-2"
+                              style={{
+                                backgroundColor: '#dc3545',
+                                color: '#ffffff',
+                                fontSize: '0.7rem'
+                              }}
+                            >
+                              AGOTADO
+                            </span>
+                          )}
+                        </td>
                         <td style={{ color: '#28a745', fontWeight: '700' }}>
                           ${producto.precio.toLocaleString("es-CL")}
                         </td>
@@ -255,12 +293,16 @@ const AdminMostrarProductos = () => {
                           <span 
                             className="badge"
                             style={{
-                              backgroundColor: producto.stock < 5 ? '#dc3545' : '#28a745',
+                              backgroundColor: producto.stock === 0 
+                                ? '#6c757d' 
+                                : producto.stock < 5 
+                                ? '#ffc107' 
+                                : '#28a745',
                               color: '#ffffff',
                               padding: '0.35rem 0.65rem'
                             }}
                           >
-                            {producto.stock}
+                            {producto.stock === 0 ? '0 (Agotado)' : producto.stock}
                           </span>
                         </td>
                         <td>

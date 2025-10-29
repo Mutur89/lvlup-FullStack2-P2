@@ -1,9 +1,10 @@
 // src/pages/admin/AdminEditarProducto.tsx
 import { useState, FormEvent, useEffect } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { getProductById, updateProduct } from "../../utils/productService";
 
 const AdminEditarProducto = () => {
+  const navigate = useNavigate(); // ✅ Agregar hook de navegación
   const [buscarId, setBuscarId] = useState("");
   const [productoEncontrado, setProductoEncontrado] = useState(false);
   const [formData, setFormData] = useState({
@@ -17,14 +18,14 @@ const AdminEditarProducto = () => {
   });
 
   const categorias = [
-    { value: "JM", label: "Juegos de Mesa" },
-    { value: "CO", label: "Consolas" },
-    { value: "PC", label: "Computadores Gamer" },
-    { value: "SG", label: "Sillas Gamer" },
-    { value: "AC", label: "Accesorios" },
-    { value: "RP", label: "Ropa" },
-    { value: "MS", label: "Mouse" },
-    { value: "MP", label: "Mousepads" },
+    { value: "Juegos de Mesa", label: "Juegos de Mesa" },
+    { value: "Consola", label: "Consola" },
+    { value: "Computador Gamer", label: "Computador Gamer" },
+    { value: "Silla Gamer", label: "Silla Gamer" },
+    { value: "Accesorios", label: "Accesorios" },
+    { value: "Ropa", label: "Ropa" },
+    { value: "Mouse", label: "Mouse" },
+    { value: "Mousepad", label: "Mousepad" },
   ];
 
   const handleBuscar = () => {
@@ -98,6 +99,8 @@ const AdminEditarProducto = () => {
     const ok = updateProduct(updated as any);
     if (ok) {
       alert("Producto actualizado");
+      // ✅ Navegar a Mostrar Productos después de actualizar
+      navigate("/admin/productos/mostrar");
     } else {
       alert("No se pudo actualizar el producto");
     }

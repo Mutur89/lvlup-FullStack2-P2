@@ -1,6 +1,12 @@
 // src/context/CartContext.tsx
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Product, getProductById } from '../data/products';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import { Product, getProductById } from "../utils/productService";
 
 export interface CartItem {
   id: string;
@@ -23,7 +29,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const useCart = () => {
   const context = useContext(CartContext);
   if (!context) {
-    throw new Error('useCart debe usarse dentro de CartProvider');
+    throw new Error("useCart debe usarse dentro de CartProvider");
   }
   return context;
 };
@@ -47,10 +53,14 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   }, [carrito]);
 
   const loadCarrito = () => {
-    const raw = localStorage.getItem('carrito');
+    const raw = localStorage.getItem("carrito");
     try {
       const parsed = raw ? JSON.parse(raw) : [];
-      if (Array.isArray(parsed) && parsed.length && typeof parsed[0] === 'string') {
+      if (
+        Array.isArray(parsed) &&
+        parsed.length &&
+        typeof parsed[0] === "string"
+      ) {
         // Formato antiguo: array de strings
         setCarrito(parsed.map((id: string) => ({ id, cantidad: 1 })));
       } else if (Array.isArray(parsed)) {
@@ -65,11 +75,11 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   };
 
   const saveCarrito = () => {
-    localStorage.setItem('carrito', JSON.stringify(carrito));
+    localStorage.setItem("carrito", JSON.stringify(carrito));
   };
 
   const updateCartCountInDOM = () => {
-    const cartCountElement = document.getElementById('cart-count');
+    const cartCountElement = document.getElementById("cart-count");
     if (cartCountElement) {
       const total = carrito.reduce((acc, item) => acc + item.cantidad, 0);
       cartCountElement.textContent = String(total);
@@ -79,7 +89,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   const addToCart = (productId: string) => {
     const producto = getProductById(productId);
     if (!producto) {
-      alert('Producto no encontrado');
+      alert("Producto no encontrado");
       return;
     }
 
@@ -88,7 +98,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
       if (existing) {
         // Ya existe, verificar stock
         if (existing.cantidad >= producto.stock) {
-          alert('No puedes agregar más, alcanzaste el stock disponible.');
+          alert("No puedes agregar más, alcanzaste el stock disponible.");
           return prev;
         }
         // Incrementar cantidad
@@ -118,20 +128,18 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     }
 
     if (cantidad > producto.stock) {
-      alert('No puedes agregar más, alcanzaste el stock disponible.');
+      alert("No puedes agregar más, alcanzaste el stock disponible.");
       return;
     }
 
     setCarrito((prev) =>
-      prev.map((item) =>
-        item.id === productId ? { ...item, cantidad } : item
-      )
+      prev.map((item) => (item.id === productId ? { ...item, cantidad } : item))
     );
   };
 
   const clearCart = () => {
     setCarrito([]);
-    localStorage.removeItem('carrito');
+    localStorage.removeItem("carrito");
   };
 
   const getCartTotal = (): number => {

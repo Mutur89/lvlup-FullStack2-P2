@@ -1,14 +1,20 @@
 // src/pages/client/DetalleProducto.tsx
-import { useEffect, useState } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
-import { Product, getProductById, products } from '../../data/products';
-import { useCart } from '../../context/CartContext';
+import { useEffect, useState } from "react";
+import { useSearchParams, Link } from "react-router-dom";
+import {
+  Product,
+  getProductById,
+  getProducts,
+} from "../../utils/productService";
+import { useCart } from "../../context/CartContext";
 
 const DetalleProducto = () => {
   const [searchParams] = useSearchParams();
   const [producto, setProducto] = useState<Product | null>(null);
-  const [productosRecomendados, setProductosRecomendados] = useState<Product[]>([]);
-  const id = searchParams.get('id') || '';
+  const [productosRecomendados, setProductosRecomendados] = useState<Product[]>(
+    []
+  );
+  const id = searchParams.get("id") || "";
   const { addToCart } = useCart();
 
   useEffect(() => {
@@ -19,13 +25,33 @@ const DetalleProducto = () => {
 
       // Obtener productos recomendados (aleatorios)
       if (productoEncontrado) {
-        const otrosProductos = products.filter(p => p.id !== id);
+        const otrosProductos = getProducts().filter((p) => p.id !== id);
         const recomendados = otrosProductos
           .sort(() => Math.random() - 0.5)
           .slice(0, 4);
         setProductosRecomendados(recomendados);
       }
     }
+  }, [id]);
+
+  // Escuchar actualizaciones de productos (cuando se modifica stock)
+  useEffect(() => {
+    const handler = () => {
+      const updated = getProductById(id);
+      setProducto(updated || null);
+    };
+
+    window.addEventListener("products.updated", handler as EventListener);
+    // también manejar storage para multi-tab
+    const storageHandler = (ev: StorageEvent) => {
+      if (ev.key === "products_v1") handler();
+    };
+    window.addEventListener("storage", storageHandler);
+
+    return () => {
+      window.removeEventListener("products.updated", handler as EventListener);
+      window.removeEventListener("storage", storageHandler);
+    };
   }, [id]);
 
   const handleAgregarCarrito = () => {
@@ -61,16 +87,22 @@ const DetalleProducto = () => {
                   src={producto.imagen}
                   alt={producto.nombre}
                   className="img-fluid rounded shadow"
-                  style={{ maxHeight: '500px', objectFit: 'contain', width: '100%' }}
+                  style={{
+                    maxHeight: "500px",
+                    objectFit: "contain",
+                    width: "100%",
+                  }}
                 />
               </div>
               <div className="col-md-6">
                 <h1 className="fw-bold mb-3 text-light">{producto.nombre}</h1>
-                <p className="badge bg-success fs-6 mb-3">{producto.categoria}</p>
+                <p className="badge bg-success fs-6 mb-3">
+                  {producto.categoria}
+                </p>
                 <p className="fs-5 text-light mb-4">{producto.descripcion}</p>
                 <div className="d-flex align-items-center mb-3">
                   <span className="fs-3 fw-bold text-success me-3">
-                    ${producto.precio.toLocaleString('es-CL')} CLP
+                    ${producto.precio.toLocaleString("es-CL")} CLP
                   </span>
                   <span className="badge bg-secondary">
                     Stock: {producto.stock} unidades
@@ -81,7 +113,7 @@ const DetalleProducto = () => {
                   onClick={handleAgregarCarrito}
                   disabled={producto.stock === 0}
                 >
-                  {producto.stock > 0 ? 'Agregar al carrito' : 'Sin stock'}
+                  {producto.stock > 0 ? "Agregar al carrito" : "Sin stock"}
                 </button>
                 <Link
                   to={`/productos?categoria=${producto.categoria}`}
@@ -102,27 +134,30 @@ const DetalleProducto = () => {
           <article>
             <div className="row g-4" id="destacados">
               {productosRecomendados.map((prod) => (
-                <div key={prod.id} className="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div
+                  key={prod.id}
+                  className="col-12 col-sm-6 col-md-4 col-lg-3"
+                >
                   <div className="card h-100">
                     <div
                       className="bg-light d-flex align-items-center justify-content-center"
                       style={{
-                        height: '180px',
-                        overflow: 'hidden',
-                        borderRadius: '8px',
+                        height: "180px",
+                        overflow: "hidden",
+                        borderRadius: "8px",
                       }}
                     >
                       <img
                         src={prod.imagen}
                         alt={prod.nombre}
                         className="w-100 h-100"
-                        style={{ objectFit: 'cover', borderRadius: '8px' }}
+                        style={{ objectFit: "cover", borderRadius: "8px" }}
                       />
                     </div>
                     <div className="card-body bg-dark text-light d-flex flex-column h-100">
                       <h5 className="card-title">{prod.nombre}</h5>
                       <p className="fw-bold mb-2">
-                        ${prod.precio.toLocaleString('es-CL')} CLP
+                        ${prod.precio.toLocaleString("es-CL")} CLP
                       </p>
                       <Link
                         to={`/detalle-producto?id=${prod.id}`}

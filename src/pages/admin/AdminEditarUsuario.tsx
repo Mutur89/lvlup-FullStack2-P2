@@ -3,6 +3,7 @@ import { useState, FormEvent, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { getUserByCorreo, updateUser } from "../../utils/userService";
 import { comunasPorRegion } from "../../utils/comunas";
+import "../../styles/admin-submenu.css";
 
 const AdminEditarUsuario = () => {
   const [buscarCorreo, setBuscarCorreo] = useState("");
@@ -20,7 +21,6 @@ const AdminEditarUsuario = () => {
   });
 
   const handleBuscar = () => {
-    // Buscar usuario por correo o nombre (buscamos por correo aquí)
     console.log("Buscando usuario:", buscarCorreo);
     if (!buscarCorreo) {
       alert("Por favor ingresa un correo");
@@ -82,7 +82,6 @@ const AdminEditarUsuario = () => {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Validaciones
     if (formData.contraseña && formData.contraseña.length < 8) {
       alert("La contraseña debe tener al menos 8 caracteres");
       return;
@@ -93,7 +92,6 @@ const AdminEditarUsuario = () => {
       return;
     }
 
-    // Actualizar usuario usando userService
     const payload = {
       nombres: formData.nombres,
       apellidos: formData.apellidos,
@@ -103,7 +101,7 @@ const AdminEditarUsuario = () => {
       region: formData.region,
       comuna: formData.comuna,
     } as any;
-    // buscar usuario existente
+
     const existing = getUserByCorreo(formData.correo);
     if (!existing) {
       alert("Usuario no encontrado para actualizar");
@@ -128,8 +126,8 @@ const AdminEditarUsuario = () => {
   return (
     <main className="col px-0">
       {/* Submenu */}
-      <aside className="d-flex border-bottom bg-light py-3 px-3">
-        <ul className="nav">
+      <aside className="d-flex border-bottom bg-light py-3 px-3 admin-submenu">
+        <ul className="nav" style={{ gap: '0.5rem' }}>
           <li className="nav-item">
             <Link className="nav-link" to="/admin/usuarios/nuevo">
               Nuevo Usuario
@@ -141,7 +139,7 @@ const AdminEditarUsuario = () => {
             </Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="/admin/usuarios/mostrar">
+            <Link className="nav-link" to="/admin/usuarios">
               Mostrar Usuarios
             </Link>
           </li>
@@ -163,7 +161,6 @@ const AdminEditarUsuario = () => {
           <h5 className="fw-bold mb-4">Editor de usuario</h5>
 
           <form onSubmit={handleSubmit}>
-            {/* Campo de búsqueda por correo */}
             <div className="mb-3">
               <label htmlFor="buscarCorreo" className="form-label">
                 CORREO
@@ -187,7 +184,6 @@ const AdminEditarUsuario = () => {
               </div>
             </div>
 
-            {/* Campo para editar nombre (nombres) */}
             <div className="mb-3">
               <label htmlFor="nombres" className="form-label">
                 NOMBRE
@@ -203,7 +199,6 @@ const AdminEditarUsuario = () => {
               />
             </div>
 
-            {/* Campos del formulario (deshabilitados hasta buscar) */}
             <div className="mb-3">
               <label htmlFor="apellidos" className="form-label">
                 APELLIDOS

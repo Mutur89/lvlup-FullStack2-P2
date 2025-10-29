@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getUsers, deleteUser } from "../../utils/userService";
+import "../../styles/admin-submenu.css";
 
 interface Usuario {
   id?: string;
@@ -20,7 +21,6 @@ const AdminMostrarUsuarios = () => {
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
 
   useEffect(() => {
-    // Cargar usuarios desde userService
     cargarUsuarios();
   }, []);
 
@@ -36,8 +36,8 @@ const AdminMostrarUsuarios = () => {
   return (
     <main id="main-admin" className="col px-0" role="main">
       {/* Submenu */}
-      <aside className="d-flex border-bottom bg-light py-3 px-3">
-        <ul className="nav">
+      <aside className="d-flex border-bottom bg-light py-3 px-3 admin-submenu">
+        <ul className="nav" style={{ gap: '0.5rem' }}>
           <li className="nav-item">
             <Link className="nav-link" to="/admin/usuarios/nuevo">
               Nuevo Usuario
@@ -61,7 +61,6 @@ const AdminMostrarUsuarios = () => {
       </header>
 
       <section className="admin-content p-4">
-        {/* Card con listado de usuarios */}
         <article
           className="card mt-2"
           style={{ minHeight: "350px", background: "#f8f9fa" }}

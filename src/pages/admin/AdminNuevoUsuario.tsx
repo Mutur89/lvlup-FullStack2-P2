@@ -3,6 +3,7 @@ import { useState, FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { createUser } from "../../utils/userService";
 import { comunasPorRegion } from "../../utils/comunas";
+import "../../styles/admin-submenu.css"; // ← Importar CSS
 
 const AdminNuevoUsuario = () => {
   const [formData, setFormData] = useState({
@@ -65,8 +66,8 @@ const AdminNuevoUsuario = () => {
   return (
     <main className="col px-0">
       {/* Submenu */}
-      <aside className="d-flex border-bottom bg-light py-3 px-3">
-        <ul className="nav">
+      <aside className="d-flex border-bottom bg-light py-3 px-3 admin-submenu">
+        <ul className="nav" style={{ gap: '0.5rem' }}>
           <li className="nav-item">
             <Link className="nav-link active" to="/admin/usuarios/nuevo">
               Nuevo Usuario

@@ -16,7 +16,7 @@ export interface User {
 
 const STORAGE_KEY = "usuarios";
 
-function initUsers(baseUsers: Partial<User>[] = []) {
+export function initUsers(baseUsers: Partial<User>[] = []) {
   if (!localStorage.getItem(STORAGE_KEY)) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(baseUsers));
   }

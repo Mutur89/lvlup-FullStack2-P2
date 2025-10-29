@@ -21,6 +21,12 @@ export function getProducts(): Product[] {
 
 function saveProducts(list: Product[]) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  // Emitir un evento para que componentes en la misma ventana puedan reaccionar
+  try {
+    window.dispatchEvent(new Event("products.updated"));
+  } catch (e) {
+    // no hacer nada si falla (por ejemplo en entornos sin window)
+  }
 }
 
 export function getProductById(id: string): Product | undefined {

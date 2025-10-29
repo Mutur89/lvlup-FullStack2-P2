@@ -12,11 +12,6 @@ export type BuscarOptions = {
   productos?: Product[];
 };
 
-/**
- * Inicializa la funcionalidad de buscar producto por ID y rellenar el formulario.
- * Por defecto escucha DOMContentLoaded y conecta los elementos con los ids usados
- * en el JS original.
- */
 export function initBuscarProducto(options?: BuscarOptions): void {
   const {
     idInputId = "idProducto",

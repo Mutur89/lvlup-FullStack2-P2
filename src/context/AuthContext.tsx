@@ -1,9 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import {
-  authenticate,
-  createUser as createUserService,
-  User,
-} from "../utils/userService";
+import { authApi, usersApi } from "../services/api";
 
 type SafeUser = {
   id: string;
@@ -60,22 +56,46 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const login = async (correo: string, password: string) => {
+    try {
+      // Llamar al backend para autenticar
+      const response = await authApi.login({
+        correo,
+        contrasena: password,
+      });
 
-    const u = authenticate(correo, password);
-    if (!u) return false;
-    const safe = {
-      id: u.id,
-      nombre: u.nombre || u.nombres || "",
-      correo: u.correo,
-      rol: u.rol,
-    };
-    localStorage.setItem("user", JSON.stringify(safe));
-    setUser(safe);
-    return true;
+      // Guardar el token JWT
+      localStorage.setItem("token", response.token);
+
+      // Obtener información del usuario desde el backend
+      // El username en la respuesta es el correo
+      const users = await usersApi.getAll();
+      const userData = users.find((u) => u.correo === correo);
+
+      if (!userData) {
+        // Si no encontramos el usuario, limpiar y retornar false
+        localStorage.removeItem("token");
+        return false;
+      }
+
+      const safe = {
+        id: userData.id.toString(),
+        nombre: userData.nombre,
+        correo: userData.correo,
+        rol: userData.rol,
+      };
+
+      localStorage.setItem("user", JSON.stringify(safe));
+      setUser(safe);
+      return true;
+    } catch (error) {
+      console.error("Error en login:", error);
+      return false;
+    }
   };
 
   const logout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
     setUser(null);
   };
 
@@ -85,23 +105,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     password: string;
     rol?: string;
   }) => {
+    try {
+      // Crear usuario en el backend
+      const created = await usersApi.create({
+        nombre: data.nombres || "",
+        correo: data.correo,
+        contrasena: data.password,
+        rol: data.rol || "CLIENTE",
+      });
 
-    const created = createUserService({
-      nombres: data.nombres,
-      correo: data.correo,
-      password: data.password,
-      rol: data.rol,
-    });
-    const safe = {
-      id: created.id,
-      nombre: created.nombre || created.nombres || "",
-      correo: created.correo,
-      rol: created.rol,
-    };
- 
-    localStorage.setItem("user", JSON.stringify(safe));
-    setUser(safe);
-    return safe;
+      const safe = {
+        id: created.id.toString(),
+        nombre: created.nombre,
+        correo: created.correo,
+        rol: created.rol,
+      };
+
+      // Auto-login después del registro
+      const loginSuccess = await login(data.correo, data.password);
+      if (!loginSuccess) {
+        throw new Error("Error al iniciar sesión después del registro");
+      }
+
+      return safe;
+    } catch (error) {
+      console.error("Error en registro:", error);
+      return null;
+    }
   };
 
   return (

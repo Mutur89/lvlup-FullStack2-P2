@@ -1,4 +1,6 @@
 // src/utils/ordersService.ts
+import { ordersApi, OrderResponse, OrderItemRequest } from '../services/api';
+
 export interface OrderItem {
   id: string;
   cantidad: number;
@@ -20,53 +22,93 @@ export interface Order {
   status?: string;
 }
 
-const KEY = "pedidos";
+// Convertir OrderResponse del backend a Order del frontend
+function mapToOrder(apiOrder: OrderResponse): Order {
+  return {
+    id: apiOrder.id.toString(),
+    createdAt: apiOrder.createdAt || new Date().toISOString(),
+    customer: {
+      userId: apiOrder.userId.toString(),
+      direccion: apiOrder.direccionEnvio,
+    },
+    items: apiOrder.orderItems.map(item => ({
+      id: item.productId.toString(),
+      cantidad: item.cantidad,
+      precioUnitario: item.precioUnitario,
+    })),
+    total: apiOrder.total,
+    status: apiOrder.estado,
+  };
+}
 
-function load(): Order[] {
+export async function getOrders(): Promise<Order[]> {
   try {
-    const raw = localStorage.getItem(KEY) || "[]";
-    return JSON.parse(raw) as Order[];
-  } catch {
+    const orders = await ordersApi.getAll();
+    return orders.map(mapToOrder).sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+  } catch (error) {
+    console.error('Error al obtener órdenes:', error);
     return [];
   }
 }
 
-function save(list: Order[]) {
-  localStorage.setItem(KEY, JSON.stringify(list));
+export async function getOrderById(id: string): Promise<Order | undefined> {
+  try {
+    const order = await ordersApi.getById(Number(id));
+    return mapToOrder(order);
+  } catch (error) {
+    console.error('Error al obtener orden por ID:', error);
+    return undefined;
+  }
 }
 
-export function getOrders(): Order[] {
-  return load().sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+export async function createOrder(payload: Omit<Order, "id" | "createdAt">): Promise<Order> {
+  try {
+    const userId = payload.customer.userId ? Number(payload.customer.userId) : 0;
+
+    const orderItems: OrderItemRequest[] = payload.items.map(item => ({
+      productId: Number(item.id),
+      cantidad: item.cantidad,
+      precioUnitario: item.precioUnitario || 0,
+    }));
+
+    const created = await ordersApi.create({
+      userId,
+      total: payload.total,
+      descuento: 0,
+      estado: payload.status || 'Pendiente',
+      metodoPago: 'Transferencia', // Valor por defecto, se puede personalizar
+      direccionEnvio: payload.customer.direccion || '',
+      orderItems,
+    });
+
+    return mapToOrder(created);
+  } catch (error) {
+    console.error('Error al crear orden:', error);
+    throw error;
+  }
 }
 
-export function getOrderById(id: string): Order | undefined {
-  return load().find((o) => o.id === id);
-}
+export async function updateOrder(id: string, patch: Partial<Order>): Promise<Order | null> {
+  try {
+    const orderItems = patch.items?.map(item => ({
+      productId: Number(item.id),
+      cantidad: item.cantidad,
+      precioUnitario: item.precioUnitario || 0,
+    }));
 
-export function createOrder(payload: Omit<Order, "id" | "createdAt">): Order {
-  const list = load();
-  const id = `P${Date.now().toString().slice(-6)}`;
-  const order: Order = {
-    id,
-    createdAt: new Date().toISOString(),
-    ...payload,
-  };
-  list.push(order);
-  save(list);
-  return order;
-}
+    const updated = await ordersApi.update(Number(id), {
+      ...(patch.customer?.userId && { userId: Number(patch.customer.userId) }),
+      ...(patch.total !== undefined && { total: patch.total }),
+      ...(patch.status && { estado: patch.status }),
+      ...(patch.customer?.direccion && { direccionEnvio: patch.customer.direccion }),
+      ...(orderItems && { orderItems }),
+    });
 
-export function updateOrder(id: string, patch: Partial<Order>): Order | null {
-  const list = load();
-  const idx = list.findIndex((o) => o.id === id);
-  if (idx === -1) return null;
-  const merged = { ...list[idx], ...patch } as Order;
-
-  merged.id = list[idx].id;
-  merged.createdAt = list[idx].createdAt;
-  list[idx] = merged;
-  save(list);
-  return merged;
+    return mapToOrder(updated);
+  } catch (error) {
+    console.error('Error al actualizar orden:', error);
+    return null;
+  }
 }
 
 export default { getOrders, getOrderById, createOrder, updateOrder };

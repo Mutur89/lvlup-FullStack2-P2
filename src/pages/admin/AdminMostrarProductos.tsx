@@ -18,13 +18,13 @@ const AdminMostrarProductos = () => {
     "Mousepad",
   ];
 
-  const handleCategoriaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleCategoriaChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const categoria = e.target.value;
     setCategoriaSeleccionada(categoria);
 
     if (categoria) {
-      const all = getProducts();
-    
+      const all = await getProducts();
+
       const filtered = all.filter((p) => p.categoria === categoria);
       setProductos(filtered);
     } else {
@@ -34,27 +34,27 @@ const AdminMostrarProductos = () => {
 
   useEffect(() => {
     // Inicialmente no mostramos nada hasta seleccionar categoría
-    
 
-    const handleProductsUpdate = () => {
+
+    const handleProductsUpdate = async () => {
       if (categoriaSeleccionada) {
-        const all = getProducts();
+        const all = await getProducts();
         const filtered = all.filter((p) => p.categoria === categoriaSeleccionada);
         setProductos(filtered);
       }
     };
 
     window.addEventListener("products.updated", handleProductsUpdate);
-    
+
     return () => {
       window.removeEventListener("products.updated", handleProductsUpdate);
     };
   }, [categoriaSeleccionada]);
 
-  const handleEliminar = (id: string) => {
+  const handleEliminar = async (id: string) => {
     if (!confirm("¿Eliminar producto? Esta acción no se puede deshacer."))
       return;
-    const ok = deleteProduct(id);
+    const ok = await deleteProduct(id);
     if (ok) {
       setProductos((prev) => prev.filter((p) => p.id !== id));
       alert("Producto eliminado");

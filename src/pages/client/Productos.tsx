@@ -1,7 +1,8 @@
 // src/pages/client/Productos.tsx
 import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { Product, getProductsByCategory } from '../../data/products';
+import { Product } from '../../data/products';
+import { getProducts } from '../../utils/productService';
 
 const Productos = () => {
   const [searchParams] = useSearchParams();
@@ -9,11 +10,15 @@ const Productos = () => {
   const categoria = searchParams.get('categoria') || '';
 
   useEffect(() => {
-    // Filtrar productos por categoría
-    if (categoria) {
-      const productosFiltrados = getProductsByCategory(categoria);
-      setProductos(productosFiltrados);
-    }
+    // Filtrar productos por categoría desde el backend
+    const fetchProductos = async () => {
+      if (categoria) {
+        const allProducts = await getProducts();
+        const productosFiltrados = allProducts.filter(p => p.categoria === categoria);
+        setProductos(productosFiltrados);
+      }
+    };
+    fetchProductos();
   }, [categoria]);
 
   return (

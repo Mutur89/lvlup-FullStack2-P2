@@ -4,7 +4,7 @@ import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { getProductById, updateProduct } from "../../utils/productService";
 
 const AdminEditarProducto = () => {
-  const navigate = useNavigate(); // ✅ Agregar hook de navegación
+  const navigate = useNavigate(); 
   const [buscarId, setBuscarId] = useState("");
   const [productoEncontrado, setProductoEncontrado] = useState(false);
   const [formData, setFormData] = useState({
@@ -99,7 +99,7 @@ const AdminEditarProducto = () => {
     const ok = updateProduct(updated as any);
     if (ok) {
       alert("Producto actualizado");
-      // ✅ Navegar a Mostrar Productos después de actualizar
+    
       navigate("/admin/productos/mostrar");
     } else {
       alert("No se pudo actualizar el producto");

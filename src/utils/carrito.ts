@@ -64,7 +64,7 @@ export function initCarrito(options?: CarritoOptions): void {
   }
 
   function renderCarrito(): void {
-    // Crear referencias locales y comprobar non-null para satisfacer a TypeScript
+    
     const listaEl = lista;
     const vacioEl = vacio;
     const totalEl = totalDiv;
@@ -133,7 +133,7 @@ export function initCarrito(options?: CarritoOptions): void {
     saveCarrito();
   }
 
-  // Manejo de botones de cantidad dentro del listado
+  
   lista.addEventListener("click", (e) => {
     const target = e.target as HTMLElement;
     if (!target) return;

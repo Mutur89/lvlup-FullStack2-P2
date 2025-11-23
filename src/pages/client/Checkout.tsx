@@ -38,8 +38,9 @@ const Checkout = () => {
     }
 
     setProcessing(true);
-
+  // PASO 1: Preparar items del carrito
     const items = carrito.map((c) => ({ id: c.id, cantidad: c.cantidad }));
+  // PASO 2: Decrementar stock (validación transaccional)
     const result = decrementStock(items);
 
     if (!result.success) {

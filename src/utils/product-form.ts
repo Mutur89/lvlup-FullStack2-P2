@@ -1,6 +1,5 @@
 /**
- * product-form.ts
- * Comportamiento cliente para el formulario de administración de productos:
+
  * - Validación de precio
  * - Previsualización de imagen y validaciones sobre tipo/tamaño
  * - Muestra mensajes en .validation-errors
@@ -60,7 +59,7 @@ export function initProductForm(options?: ProductFormOptions): void {
       }
       const reader = new FileReader();
       reader.onload = () => {
-        // reader.result puede ser string o ArrayBuffer
+
         if (typeof reader.result === 'string') {
           preview.src = reader.result;
           preview.style.display = 'block';
@@ -71,7 +70,7 @@ export function initProductForm(options?: ProductFormOptions): void {
     });
   }
 
-  // Validate on submit
+
   form.addEventListener('submit', (evt) => {
     let valid = true;
     setError('');
@@ -82,7 +81,7 @@ export function initProductForm(options?: ProductFormOptions): void {
         valid = false;
       }
     }
-    // image optional but if present must be an image
+
     if (imagenInput && imagenInput.files && imagenInput.files[0]) {
       const f = imagenInput.files[0];
       if (!f.type || !f.type.startsWith('image/')) {
@@ -98,7 +97,7 @@ export function initProductForm(options?: ProductFormOptions): void {
   });
 }
 
-// Auto-inicializar en DOMContentLoaded (mantiene comportamiento del JS original)
+
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => initProductForm());
 } else {

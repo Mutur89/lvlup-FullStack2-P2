@@ -61,7 +61,7 @@ export function initPostsLoader(options?: PostsLoaderOptions): void {
       const res = await fetch(path, { cache: 'no-cache' });
       if (!res.ok) throw new Error('No se pudo cargar el post');
       const html = await res.text();
-      // Small delay to allow fade-out
+
       setTimeout(() => {
         containerEl.innerHTML = html;
         containerEl.style.opacity = '1';
@@ -69,13 +69,13 @@ export function initPostsLoader(options?: PostsLoaderOptions): void {
         try {
           history.replaceState(null, '', `?post=${n}`);
         } catch (e) {
-          // ignore history errors on some environments
+
         }
       }, fadeDurationMs);
     } catch (err) {
   containerEl.innerHTML = '<div class="text-danger">Error al cargar el contenido. Intenta recargar la página.</div>';
   containerEl.style.opacity = '1';
-      // eslint-disable-next-line no-console
+
       console.error(err);
     }
   }
@@ -89,7 +89,7 @@ export function initPostsLoader(options?: PostsLoaderOptions): void {
   btn2El.addEventListener('click', () => loadPost(2));
 }
 
-// Auto-initialize similarly to original script
+
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => initPostsLoader());
 } else {

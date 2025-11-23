@@ -1,9 +1,4 @@
-/**
- * Validaciones simples para formularios de admin
- * - Busca formularios por selector (por defecto 'form')
- * - Valida password (mínimo 8) y que password === confirm_password
- * - Añade clase 'is-invalid' a inputs con errores y escribe mensaje en .validation-errors
- */
+
 export type ValidacionesOptions = {
   selector?: string;
 };
@@ -21,7 +16,7 @@ export function initFormValidations(options?: ValidacionesOptions): void {
       const confirm = form.querySelector<HTMLInputElement>('input[name="confirm_password"]');
       let valid = true;
 
-      // reset
+  
       [pw, confirm].forEach((inp) => {
         if (!inp) return;
         inp.classList.remove('is-invalid');

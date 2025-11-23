@@ -1,8 +1,8 @@
 // src/utils/userService.ts
 export interface User {
   id: string;
-  nombre?: string; // normalized single name
-  nombres?: string; // original form field
+  nombre?: string; 
+  nombres?: string; 
   apellidos?: string;
   correo?: string;
   rut?: string;
@@ -53,14 +53,14 @@ export function getUserByCorreo(correo?: string): User | undefined {
 function encodePassword(password?: string) {
   if (!password) return undefined;
   try {
-    // uso simple de base64 para no guardar la contraseña en texto plano (cliente)
+  
     if (
       typeof globalThis !== "undefined" &&
       typeof (globalThis as any).btoa === "function"
     ) {
       return (globalThis as any).btoa(password);
     }
-    // fallback: devolver la contraseña sin codificar (no ideal, pero evita errores en entornos sin btoa)
+  
     return password;
   } catch {
     return undefined;
@@ -103,7 +103,7 @@ export function createUser(data: Partial<User>): User {
     telefono: data.telefono,
     rol: data.rol || "visualizador",
   };
-  // almacenar contraseña (codificada) si se entrega
+  // almacenar contraseña (codificada)
   if ((data as any).password) {
     (user as any)._pw = encodePassword((data as any).password as string);
   }

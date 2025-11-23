@@ -60,7 +60,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const login = async (correo: string, password: string) => {
-    // authenticate is sync in userService but keep async signature
+
     const u = authenticate(correo, password);
     if (!u) return false;
     const safe = {
@@ -85,7 +85,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     password: string;
     rol?: string;
   }) => {
-    // wrap createUserService (throws on duplicate)
+
     const created = createUserService({
       nombres: data.nombres,
       correo: data.correo,
@@ -98,7 +98,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       correo: created.correo,
       rol: created.rol,
     };
-    // Auto-login: store and set user so the app treats the user as authenticated immediately
+ 
     localStorage.setItem("user", JSON.stringify(safe));
     setUser(safe);
     return safe;

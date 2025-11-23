@@ -106,7 +106,7 @@ export function initBuscarProducto(options?: BuscarOptions): void {
           if (opcion) {
             categoriaSelect.value = categoriaId;
           } else {
-            // No existe la opción; como fallback dejar el select en vacío o primer valor
+          
             categoriaSelect.value = "";
           }
         }

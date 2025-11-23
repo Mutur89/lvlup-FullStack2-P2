@@ -61,7 +61,7 @@ export function updateOrder(id: string, patch: Partial<Order>): Order | null {
   const idx = list.findIndex((o) => o.id === id);
   if (idx === -1) return null;
   const merged = { ...list[idx], ...patch } as Order;
-  // ensure createdAt and id not overwritten
+
   merged.id = list[idx].id;
   merged.createdAt = list[idx].createdAt;
   list[idx] = merged;

@@ -41,12 +41,7 @@ export function renderDetalleHTML(producto: Product): string {
   `;
 }
 
-/**
- * Inicializa la vista de detalle del producto.
- * - Lee ?id=... desde la URL
- * - Busca el producto en la lista y renderiza
- * - Agrega comportamiento para añadir al carrito en localStorage
- */
+
 export function initDetalleProducto(options?: DetalleOptions): void {
   const { containerId = "detalle-producto", productos = defaultProducts } =
     options || {};
@@ -84,7 +79,7 @@ export function initDetalleProducto(options?: DetalleOptions): void {
       if (raw) {
         try {
           const parsed = JSON.parse(raw);
-          // Normaliza: si son strings, convertirlos a objetos {id, cantidad}
+          // Normaliza
           carrito = Array.isArray(parsed)
             ? parsed.map((item: any) =>
                 typeof item === "string" ? { id: item, cantidad: 1 } : item
@@ -105,13 +100,13 @@ export function initDetalleProducto(options?: DetalleOptions): void {
       localStorage.setItem("carrito", JSON.stringify(carrito));
       alert("Producto agregado al carrito");
 
-      // Si hay una función global updateCartCount, llamarla
+     
       const win = window as any;
       if (typeof win.updateCartCount === "function") {
         try {
           win.updateCartCount();
         } catch (e) {
-          // ignorar errores internos de la función global
+    
         }
       }
     });

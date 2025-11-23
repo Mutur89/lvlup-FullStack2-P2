@@ -1,8 +1,6 @@
 // src/data/users.ts
-// Seed de usuarios para desarrollo
 import type { User } from "../utils/userService";
 
-// Las contraseñas están codificadas en base64 para coincidir con la lógica actual (_pw)
 const users: User[] = [
   {
     id: "U000001",

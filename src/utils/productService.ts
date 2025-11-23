@@ -25,7 +25,7 @@ function saveProducts(list: Product[]) {
   try {
     window.dispatchEvent(new Event("products.updated"));
   } catch (e) {
-    // no hacer nada si falla (por ejemplo en entornos sin window)
+    // no hacer nada si falla
   }
 }
 
@@ -63,9 +63,7 @@ export function deleteProduct(id: string): boolean {
 
 export type CartItem = { id: string; cantidad: number };
 
-/**
- * Reduce stock for given cart items. Returns an object with success and failures.
- */
+
 export function decrementStock(items: CartItem[]): {
   success: boolean;
   failed: { id: string; reason: string }[];
@@ -73,7 +71,7 @@ export function decrementStock(items: CartItem[]): {
   const list = getProducts();
   const failures: { id: string; reason: string }[] = [];
 
-  // Check availability first
+ // FASE 1: Validar todo antes de modificar
   for (const it of items) {
     const p = list.find((x) => x.id === it.id);
     if (!p) {
@@ -89,7 +87,7 @@ export function decrementStock(items: CartItem[]): {
     return { success: false, failed: failures };
   }
 
-  // Apply reductions
+ // FASE 2: Aplicar cambios solo si todo está OK
   const newList = list.map((p) => {
     const found = items.find((it) => it.id === p.id);
     if (found) {

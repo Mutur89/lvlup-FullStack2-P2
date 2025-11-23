@@ -2,7 +2,7 @@
 import { Link } from 'react-router-dom';
 
 const AdminDashboard = () => {
-  // Tu compañero agregará la lógica para obtener estos datos
+  
   const stats = {
     productos: 1234,
     usuarios: 489,
@@ -49,7 +49,7 @@ const AdminDashboard = () => {
               <div className="card shadow-sm border-0" style={{ background: '#1e293b' }}>
                 <div className="card-body d-flex align-items-center justify-content-between p-4">
                   <div>
-                    <h6 className="mb-2 text-white-50 fw-normal" style={{ fontSize: '0.875rem' }}>
+                    <h6 className="mb-2 fw-semibold" style={{ fontSize: '0.875rem', color: '#000000', textShadow: '0 0 5px #39ff14, 0 0 10px #39ff14' }}>
                       Productos
                     </h6>
                     <h2 className="mb-0 fw-bold text-white">{stats.productos}</h2>
@@ -64,7 +64,7 @@ const AdminDashboard = () => {
               <div className="card shadow-sm border-0" style={{ background: '#1e293b' }}>
                 <div className="card-body d-flex align-items-center justify-content-between p-4">
                   <div>
-                    <h6 className="mb-2 text-white-50 fw-normal" style={{ fontSize: '0.875rem' }}>
+                    <h6 className="mb-2 fw-semibold" style={{ fontSize: '0.875rem', color: '#000000', textShadow: '0 0 5px #39ff14, 0 0 10px #39ff14' }}>
                       Usuarios
                     </h6>
                     <h2 className="mb-0 fw-bold text-white">{stats.usuarios}</h2>
@@ -79,7 +79,7 @@ const AdminDashboard = () => {
               <div className="card shadow-sm border-0" style={{ background: '#1e293b' }}>
                 <div className="card-body d-flex align-items-center justify-content-between p-4">
                   <div>
-                    <h6 className="mb-2 text-white-50 fw-normal" style={{ fontSize: '0.875rem' }}>
+                    <h6 className="mb-2 fw-semibold" style={{ fontSize: '0.875rem', color: '#000000', textShadow: '0 0 5px #39ff14, 0 0 10px #39ff14' }}>
                       Pedidos activos
                     </h6>
                     <h2 className="mb-0 fw-bold text-white">{stats.pedidosActivos}</h2>
@@ -94,7 +94,7 @@ const AdminDashboard = () => {
               <div className="card shadow-sm border-0" style={{ background: '#1e293b' }}>
                 <div className="card-body d-flex align-items-center justify-content-between p-4">
                   <div>
-                    <h6 className="mb-2 text-white-50 fw-normal" style={{ fontSize: '0.875rem' }}>
+                    <h6 className="mb-2 fw-semibold" style={{ fontSize: '0.875rem', color: '#000000', textShadow: '0 0 5px #39ff14, 0 0 10px #39ff14' }}>
                       Productos con poco stock
                     </h6>
                     <h2 className="mb-0 fw-bold text-white">{stats.productosBajoStock}</h2>

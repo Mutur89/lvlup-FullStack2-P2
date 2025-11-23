@@ -19,7 +19,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { useEffect } from "react";
 import usersSeed from "./data/users";
 
-// Admin Pages
+// Admin 
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminProductos from "./pages/admin/AdminProductos";
 import AdminNuevoProducto from "./pages/admin/AdminNuevoProducto";

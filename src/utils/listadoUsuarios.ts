@@ -15,14 +15,10 @@ export interface Usuario {
 
 export type ListadoUsuariosOptions = {
   containerId?: string;
-  baseUsers?: Usuario[]; // usuarios cargados desde un archivo estático (opcional)
+  baseUsers?: Usuario[]; 
 };
 
-/**
- * Inicializa el listado de usuarios en el DOM.
- * - Lee usuarios desde localStorage (clave 'usuarios') y los combina con baseUsers
- * - Evita duplicados por RUT o correo (prioriza el primer encontrado)
- */
+
 export function initListadoUsuarios(options?: ListadoUsuariosOptions): void {
   const { containerId = "listado-usuarios", baseUsers = [] } = options || {};
 

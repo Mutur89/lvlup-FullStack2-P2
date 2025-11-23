@@ -24,7 +24,7 @@ const AdminMostrarProductos = () => {
 
     if (categoria) {
       const all = getProducts();
-      // ✅ NO FILTRAR POR STOCK - Mostrar todos los productos incluso con stock 0
+    
       const filtered = all.filter((p) => p.categoria === categoria);
       setProductos(filtered);
     } else {
@@ -35,7 +35,7 @@ const AdminMostrarProductos = () => {
   useEffect(() => {
     // Inicialmente no mostramos nada hasta seleccionar categoría
     
-    // ✅ Escuchar cambios en productos
+
     const handleProductsUpdate = () => {
       if (categoriaSeleccionada) {
         const all = getProducts();

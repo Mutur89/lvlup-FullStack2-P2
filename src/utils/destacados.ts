@@ -6,15 +6,13 @@ export type DestacadosOptions = {
   cantidad?: number;
 };
 
-/**
- * Devuelve hasta n elementos aleatorios del array sin modificar el original
- */
+
 export function obtenerProductosAleatorios<T>(arr: T[], n: number): T[] {
   const copia = [...arr];
   const resultado: T[] = [];
   while (resultado.length < n && copia.length > 0) {
     const idx = Math.floor(Math.random() * copia.length);
-    // splice devuelve un array; extraemos el primer elemento
+
     resultado.push(copia.splice(idx, 1)[0]);
   }
   return resultado;
@@ -43,10 +41,7 @@ export function renderDestacadoHTML(producto: Product): string {
   `;
 }
 
-/**
- * Inicializa la sección de productos destacados.
- * Por defecto busca el elemento con id "destacados" y muestra 4 productos aleatorios.
- */
+
 export function initDestacados(options?: DestacadosOptions): void {
   const {
     containerId = "destacados",

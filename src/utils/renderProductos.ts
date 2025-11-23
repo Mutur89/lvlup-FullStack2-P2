@@ -29,12 +29,12 @@ export function renderProductoHTML(producto: Product): string {
 `;
 }
 
-/**
- * Inicializa el listado de productos en el DOM.
- * - Lee la categoría desde la querystring (?categoria=...)
- * - Actualiza el elemento `tituloId` con la categoría
- * - Filtra productos por categoría y los renderiza dentro de `containerId`
- */
+
+  //-Inicializa el listado de productos en el DOM.
+  //- Lee la categoría desde la querystring
+  //- Actualiza el elemento 'tituloId' con la categoría
+  //- Filtra productos por categoría y los renderiza dentro de 'containerId'
+
 export function initProductosList(options?: InitOptions): void {
   const {
     containerId = "contenedor-productos",
@@ -56,9 +56,7 @@ export function initProductosList(options?: InitOptions): void {
 
   const contenedor = document.getElementById(containerId);
   if (!contenedor) {
-    // No romper; emitir advertencia para ayudar al desarrollador
-    // (quien use este módulo debe asegurarse de que el elemento exista)
-    // eslint-disable-next-line no-console
+
     console.warn(`Contenedor con id \"${containerId}\" no encontrado.`);
     return;
   }

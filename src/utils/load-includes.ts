@@ -1,13 +1,9 @@
-/**
- * load-includes.ts
- * Normaliza la inyección de CSS/JS comunes y carga fragments (header/footer/admin)
- * basado en load-includes.js
- */
+
 
 export type LoadIncludesOptions = {
   bootstrapCss?: string;
   bootstrapBundle?: string;
-  styleRelPath?: string; // relative path resolved against script URL
+  styleRelPath?: string; 
 };
 
 export function initLoadIncludes(options?: LoadIncludesOptions): void {
@@ -17,14 +13,14 @@ export function initLoadIncludes(options?: LoadIncludesOptions): void {
     styleRelPath = '../src/styles/style.css',
   } = options || {};
 
-  // Detect the script's own URL and use it to resolve include paths reliably.
+ 
   const currentScript = (document.currentScript as HTMLScriptElement | null) || ((): HTMLScriptElement | null => {
     const scripts = document.getElementsByTagName('script');
     return scripts[scripts.length - 1] as HTMLScriptElement | null;
   })();
   const scriptSrc = currentScript && currentScript.src ? currentScript.src : window.location.href;
 
-  // Resolve helpers using URL relative to scriptSrc
+ 
   const resolve = (rel: string) => new URL(rel, scriptSrc).href;
 
   // Inyecta CSS/JS comunes si no están presentes
@@ -45,11 +41,11 @@ export function initLoadIncludes(options?: LoadIncludesOptions): void {
     }
   }
 
-  // Default CSS / Bootstrap
+ 
   ensureCSS(bootstrapCss);
   ensureCSS(resolve(styleRelPath));
 
-  // Load header and footer fragments
+
   async function loadFragment(selector: string, path: string) {
     try {
       const res = await fetch(path, { cache: 'no-cache' });
@@ -58,7 +54,7 @@ export function initLoadIncludes(options?: LoadIncludesOptions): void {
       const container = document.querySelector(selector);
       if (container) container.innerHTML = html;
     } catch (e) {
-      // eslint-disable-next-line no-console
+  
       console.error('loadFragment error', e);
     }
   }
@@ -76,7 +72,7 @@ export function initLoadIncludes(options?: LoadIncludesOptions): void {
   });
 }
 
-// Auto-initialize like the original script
+
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => initLoadIncludes());
 } else {

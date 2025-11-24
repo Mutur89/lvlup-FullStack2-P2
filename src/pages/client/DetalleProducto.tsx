@@ -14,30 +14,37 @@ const DetalleProducto = () => {
   const [productosRecomendados, setProductosRecomendados] = useState<Product[]>(
     []
   );
+  const [loading, setLoading] = useState(true);
   const id = searchParams.get("id") || "";
   const { addToCart } = useCart();
 
   useEffect(() => {
-    if (id) {
-      // Buscar el producto por ID
-      const productoEncontrado = getProductById(id);
-      setProducto(productoEncontrado || null);
+    const fetchProducto = async () => {
+      setLoading(true);
+      if (id) {
+        // Buscar el producto por ID
+        const productoEncontrado = await getProductById(id);
+        setProducto(productoEncontrado || null);
 
-      // Obtener productos recomendados (aleatorios)
-      if (productoEncontrado) {
-        const otrosProductos = getProducts().filter((p) => p.id !== id);
-        const recomendados = otrosProductos
-          .sort(() => Math.random() - 0.5)
-          .slice(0, 4);
-        setProductosRecomendados(recomendados);
+        // Obtener productos recomendados (aleatorios)
+        if (productoEncontrado) {
+          const otrosProductos = (await getProducts()).filter((p) => p.id !== id);
+          const recomendados = otrosProductos
+            .sort(() => Math.random() - 0.5)
+            .slice(0, 4);
+          setProductosRecomendados(recomendados);
+        }
       }
-    }
+      setLoading(false);
+    };
+
+    fetchProducto();
   }, [id]);
 
   // Escuchar actualizaciones de productos (cuando se modifica stock)
   useEffect(() => {
-    const handler = () => {
-      const updated = getProductById(id);
+    const handler = async () => {
+      const updated = await getProductById(id);
       setProducto(updated || null);
     };
 
@@ -60,6 +67,17 @@ const DetalleProducto = () => {
       alert(`"${producto.nombre}" agregado al carrito`);
     }
   };
+
+  if (loading) {
+    return (
+      <main className="container py-5 text-center">
+        <div className="spinner-border text-success" role="status">
+          <span className="visually-hidden">Cargando...</span>
+        </div>
+        <p className="text-light mt-3">Cargando producto...</p>
+      </main>
+    );
+  }
 
   if (!producto) {
     return (

@@ -4,7 +4,14 @@
       "Bash(dir:*)",
       "Bash(findstr:*)",
       "Bash(npm install:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(.mvnw.cmd spring-boot:run:*)",
+      "Bash(mvnw.cmd spring-boot:run:*)",
+      "Bash(where mvn:*)",
+      "Bash(netstat:*)",
+      "Bash(taskkill:*)",
+      "Bash(tasklist:*)",
+      "Bash(del \"d:\\Duoc\\Fullstack 2\\lvlup-backend\\src\\main\\java\\com\\lvlup\\tienda\\config\\SwaggerConfig.java\")"
     ],
     "deny": [],
     "ask": []

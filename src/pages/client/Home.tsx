@@ -1,11 +1,11 @@
 // src/pages/client/Home.tsx
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { products } from '../../data/products';
+import { getProducts, Product } from '../../utils/productService';
 
 // Función para obtener productos aleatorios sin repetir
-const obtenerProductosAleatorios = (cantidad: number) => {
-  const copia = [...products];
+const obtenerProductosAleatorios = (productos: Product[], cantidad: number) => {
+  const copia = [...productos];
   const resultado = [];
   while (resultado.length < cantidad && copia.length > 0) {
     const idx = Math.floor(Math.random() * copia.length);
@@ -15,13 +15,21 @@ const obtenerProductosAleatorios = (cantidad: number) => {
 };
 
 const Home = () => {
-  const [productosDestacados, setProductosDestacados] = useState<any[]>([]);
+  const [productosDestacados, setProductosDestacados] = useState<Product[]>([]);
   const [grupoActual, setGrupoActual] = useState(0);
-  
-  // Inicializar 20 productos aleatorios (5 grupos de 4)
+  const [loading, setLoading] = useState(true);
+
+  // Inicializar 20 productos aleatorios (5 grupos de 4) desde el backend
   useEffect(() => {
-    const productosAleatorios = obtenerProductosAleatorios(20);
-    setProductosDestacados(productosAleatorios);
+    const fetchProductos = async () => {
+      setLoading(true);
+      const todosLosProductos = await getProducts();
+      const productosAleatorios = obtenerProductosAleatorios(todosLosProductos, 20);
+      setProductosDestacados(productosAleatorios);
+      setLoading(false);
+    };
+
+    fetchProductos();
   }, []);
 
   // Cambiar de grupo cada 5 segundos
@@ -197,22 +205,29 @@ const Home = () => {
               {/* ARTICLE - Grid de productos */}
               <article>
                 <div className="row g-4" id="destacados">
-                  {productosActuales.length > 0 ? (
+                  {loading ? (
+                    <div className="col-12 text-center py-5">
+                      <div className="spinner-border text-success" role="status">
+                        <span className="visually-hidden">Cargando...</span>
+                      </div>
+                      <p className="text-muted mt-3">Cargando productos destacados...</p>
+                    </div>
+                  ) : productosActuales.length > 0 ? (
                     productosActuales.map((producto) => (
                       <div key={producto.id} className="col-6 col-md-4 col-lg-3">
                         <div className="card h-100 bg-dark text-light border-success">
-                          <div 
+                          <div
                             className="bg-light d-flex align-items-center justify-content-center p-2"
                             style={{ height: '180px' }}
                           >
-                            <img 
-                              src={producto.imagen} 
+                            <img
+                              src={producto.imagen}
                               alt={producto.nombre}
                               className="img-fluid"
-                              style={{ 
-                                maxHeight: '170px', 
+                              style={{
+                                maxHeight: '170px',
                                 maxWidth: '100%',
-                                objectFit: 'contain' 
+                                objectFit: 'contain'
                               }}
                             />
                           </div>
@@ -236,7 +251,7 @@ const Home = () => {
                     ))
                   ) : (
                     <div className="col-12 text-center py-5">
-                      <p className="text-muted">Cargando productos destacados...</p>
+                      <p className="text-muted">No hay productos disponibles</p>
                     </div>
                   )}
                 </div>

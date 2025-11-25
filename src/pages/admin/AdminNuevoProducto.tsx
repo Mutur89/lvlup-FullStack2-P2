@@ -12,6 +12,7 @@ const AdminNuevoProducto = () => {
     stock: "",
     imagen: "",
   });
+  const [loading, setLoading] = useState(false); // Nuevo estado para UX
   const navigate = useNavigate();
 
   const categorias = [
@@ -36,102 +37,87 @@ const AdminNuevoProducto = () => {
     });
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Convertir campos a tipos correctos
-    const payload = {
-      nombre: formData.nombre,
-      descripcion: formData.descripcion,
-      categoria: formData.categoria,
-      precio: Number(formData.precio),
-      stock: Number(formData.stock),
-      imagen: formData.imagen,
-    };
+    setLoading(true); // Bloqueamos el botón
 
-    const created = createProduct(payload as any);
-    console.log("Producto creado:", created);
-    alert(`Producto creado con ID ${created.id}`);
-    navigate("/admin/productos/mostrar");
+    try {
+      // Convertir campos a tipos correctos
+      const payload = {
+        nombre: formData.nombre,
+        descripcion: formData.descripcion,
+        categoria: formData.categoria,
+        precio: Number(formData.precio),
+        stock: Number(formData.stock),
+        imagen: formData.imagen,
+      };
+
+      // ¡AQUÍ ESTABA EL ERROR! Faltaba el 'await'
+      const created = await createProduct(payload);
+
+      console.log("Producto creado:", created);
+      alert(`¡Éxito! Producto creado con ID ${created.id}`);
+      navigate("/admin/productos/mostrar"); // Redirigir a la lista
+    } catch (error) {
+      console.error(error);
+      alert("Error al crear el producto. Revisa la consola.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <main id="main-admin" className="col px-0">
-      {/* Submenu - CON ESTILOS LEGIBLES */}
-      <aside 
+      {/* Submenu */}
+      <aside
         style={{
-          backgroundColor: '#f8f9fa',
-          borderBottom: '2px solid #dee2e6',
-          padding: '1rem 1.5rem',
-          display: 'flex'
+          backgroundColor: "#f8f9fa",
+          borderBottom: "2px solid #dee2e6",
+          padding: "1rem 1.5rem",
+          display: "flex",
         }}
       >
-        <ul className="nav" style={{ gap: '0.5rem', display: 'flex', margin: 0, padding: 0, listStyle: 'none' }}>
+        <ul
+          className="nav"
+          style={{
+            gap: "0.5rem",
+            display: "flex",
+            margin: 0,
+            padding: 0,
+            listStyle: "none",
+          }}
+        >
           <li>
-            <Link 
+            <Link
               to="/admin/productos/nuevo"
               style={{
-                color: '#ffffff',
-                fontWeight: '700',
-                fontSize: '1rem',
-                padding: '0.6rem 1.2rem',
-                backgroundColor: '#0d6efd',
-                borderRadius: '6px',
-                textDecoration: 'none',
-                display: 'block'
+                color: "#ffffff",
+                fontWeight: "700",
+                fontSize: "1rem",
+                padding: "0.6rem 1.2rem",
+                backgroundColor: "#0d6efd",
+                borderRadius: "6px",
+                textDecoration: "none",
+                display: "block",
               }}
             >
               Nuevo Producto
             </Link>
           </li>
           <li>
-            <Link 
-              to="/admin/productos/editar"
-              style={{
-                color: '#212529',
-                fontWeight: '600',
-                fontSize: '1rem',
-                padding: '0.6rem 1.2rem',
-                backgroundColor: 'transparent',
-                borderRadius: '6px',
-                textDecoration: 'none',
-                display: 'block',
-                transition: 'all 0.2s',
-                border: '1px solid transparent'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#e9ecef';
-                e.currentTarget.style.borderColor = '#dee2e6';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-                e.currentTarget.style.borderColor = 'transparent';
-              }}
-            >
-              Editar Producto
-            </Link>
-          </li>
-          <li>
-            <Link 
+            <Link
               to="/admin/productos/mostrar"
               style={{
-                color: '#212529',
-                fontWeight: '600',
-                fontSize: '1rem',
-                padding: '0.6rem 1.2rem',
-                backgroundColor: 'transparent',
-                borderRadius: '6px',
-                textDecoration: 'none',
-                display: 'block',
-                transition: 'all 0.2s',
-                border: '1px solid transparent'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#e9ecef';
-                e.currentTarget.style.borderColor = '#dee2e6';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-                e.currentTarget.style.borderColor = 'transparent';
+                color: "#212529",
+                fontWeight: "600",
+                fontSize: "1rem",
+                padding: "0.6rem 1.2rem",
+                backgroundColor: "transparent",
+                borderRadius: "6px",
+                textDecoration: "none",
+                display: "block",
+                transition: "all 0.2s",
+                border: "1px solid transparent",
               }}
             >
               Mostrar Productos
@@ -208,13 +194,14 @@ const AdminNuevoProducto = () => {
                 PRECIO
               </label>
               <input
-                type="text"
+                type="number" // Cambiado a number para evitar errores
                 className="form-control"
                 id="precio"
                 value={formData.precio}
                 onChange={handleChange}
                 placeholder="Ej: 29990"
                 required
+                min="0"
               />
             </div>
 
@@ -248,8 +235,12 @@ const AdminNuevoProducto = () => {
               />
             </div>
 
-            <button type="submit" className="btn btn-dark w-100 mt-2">
-              REGISTRAR PRODUCTO
+            <button
+              type="submit"
+              className="btn btn-dark w-100 mt-2"
+              disabled={loading}
+            >
+              {loading ? "Guardando..." : "REGISTRAR PRODUCTO"}
             </button>
           </form>
         </div>

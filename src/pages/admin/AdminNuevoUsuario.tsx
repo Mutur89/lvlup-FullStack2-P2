@@ -2,21 +2,24 @@
 import { useState, FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { createUser } from "../../utils/userService";
-import { comunasPorRegion } from "../../utils/comunas";
-import "../../styles/admin-submenu.css"; // ← Importar CSS
 
 const AdminNuevoUsuario = () => {
   const [formData, setFormData] = useState({
-    nombres: "",
-    apellidos: "",
+    nombre: "",
+    apellido: "",
+    rut: "",
     correo: "",
-    rol: "",
-    contraseña: "",
-    confirmar: "",
+    contrasena: "",
+    rol: "CLIENTE",
     telefono: "",
+    direccion: "",
     region: "",
     comuna: "",
+    fechaNacimiento: "", // String para el input type="date"
   });
+
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -27,59 +30,136 @@ const AdminNuevoUsuario = () => {
     });
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
 
-    // Validaciones básicas
-    if (formData.contraseña.length < 8) {
-      alert("La contraseña debe tener al menos 8 caracteres");
+    // 1. Validar SOLO los campos obligatorios (Igual que en el registro de cliente)
+    if (
+      !formData.nombre ||
+      !formData.apellido ||
+      !formData.rut ||
+      !formData.correo ||
+      !formData.contrasena
+    ) {
+      alert("Por favor, completa los campos obligatorios marcados con (*)");
+      setLoading(false);
       return;
     }
 
-    if (formData.contraseña !== formData.confirmar) {
-      alert("Las contraseñas no coinciden");
-      return;
-    }
-
-    // Normalizar y crear usuario
-    const payload = {
-      nombres: formData.nombres,
-      apellidos: formData.apellidos,
-      correo: formData.correo,
-      rol: formData.rol,
-      telefono: formData.telefono,
-      region: formData.region,
-      comuna: formData.comuna,
-    };
     try {
-      const created = createUser(payload);
-      console.log("Usuario creado:", created);
-      alert("Usuario registrado: " + (created.correo || created.id));
+      // 2. Preparar fecha de nacimiento
+      // Si el admin eligió fecha, la convertimos a Timestamp. Si no, usamos la fecha de hoy.
+      let fechaTimestamp = Date.now();
+      if (formData.fechaNacimiento) {
+        // Sumamos las horas para evitar problemas de zona horaria (opcional, ajuste simple)
+        const dateObj = new Date(formData.fechaNacimiento);
+        fechaTimestamp = dateObj.getTime();
+      }
+
+      // 3. Enviar al backend con valores por defecto para los opcionales
+      await createUser({
+        nombre: formData.nombre,
+        apellido: formData.apellido,
+        rut: formData.rut,
+        correo: formData.correo,
+        password: formData.contrasena,
+        rol: formData.rol,
+
+        // Si están vacíos, enviamos "relleno" para satisfacer a la Base de Datos (NOT NULL)
+        telefono: formData.telefono || "00000000",
+        direccion: formData.direccion || "Sin dirección",
+        region: formData.region || "Sin región",
+        comuna: formData.comuna || "Sin comuna",
+
+        // La fecha procesada
+        fechaNacimiento: fechaTimestamp,
+      });
+
+      alert("¡Usuario creado exitosamente!");
       navigate("/admin/usuarios/mostrar");
-    } catch (err: any) {
-      alert(err?.message || "Error al crear usuario");
+    } catch (error: any) {
+      console.error(error);
+      alert(
+        error.message ||
+          "Error al crear el usuario. Verifica que el correo no exista."
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
-  const navigate = useNavigate();
-
   return (
-    <main className="col px-0">
+    <main id="main-admin" className="col px-0">
       {/* Submenu */}
-      <aside className="d-flex border-bottom bg-light py-3 px-3 admin-submenu">
-        <ul className="nav" style={{ gap: '0.5rem' }}>
-          <li className="nav-item">
-            <Link className="nav-link active" to="/admin/usuarios/nuevo">
+      <aside
+        style={{
+          backgroundColor: "#f8f9fa",
+          borderBottom: "2px solid #dee2e6",
+          padding: "1rem 1.5rem",
+          display: "flex",
+        }}
+      >
+        <ul
+          className="nav"
+          style={{
+            gap: "0.5rem",
+            display: "flex",
+            margin: 0,
+            padding: 0,
+            listStyle: "none",
+          }}
+        >
+          <li>
+            <Link
+              to="/admin/usuarios/nuevo"
+              style={{
+                color: "#ffffff",
+                fontWeight: "700",
+                fontSize: "1rem",
+                padding: "0.6rem 1.2rem",
+                backgroundColor: "#0d6efd",
+                borderRadius: "6px",
+                textDecoration: "none",
+                display: "block",
+              }}
+            >
               Nuevo Usuario
             </Link>
           </li>
-          <li className="nav-item">
-            <Link className="nav-link" to="/admin/usuarios/editar">
+          <li>
+            <Link
+              to="/admin/usuarios/editar"
+              style={{
+                color: "#212529",
+                fontWeight: "600",
+                fontSize: "1rem",
+                padding: "0.6rem 1.2rem",
+                backgroundColor: "transparent",
+                borderRadius: "6px",
+                textDecoration: "none",
+                display: "block",
+                border: "1px solid transparent",
+              }}
+            >
               Editar Usuario
             </Link>
           </li>
-          <li className="nav-item">
-            <Link className="nav-link" to="/admin/usuarios">
+          <li>
+            <Link
+              to="/admin/usuarios/mostrar"
+              style={{
+                color: "#212529",
+                fontWeight: "600",
+                fontSize: "1rem",
+                padding: "0.6rem 1.2rem",
+                backgroundColor: "transparent",
+                borderRadius: "6px",
+                textDecoration: "none",
+                display: "block",
+                border: "1px solid transparent",
+              }}
+            >
               Mostrar Usuarios
             </Link>
           </li>
@@ -87,7 +167,7 @@ const AdminNuevoUsuario = () => {
       </aside>
 
       <header className="admin-header p-4 bg-white border-bottom">
-        <h3 className="fw-bold mb-0 text-dark">Nuevo Usuario</h3>
+        <h3 className="fw-bold mb-0 text-dark">Registrar Nuevo Usuario</h3>
       </header>
 
       <section
@@ -96,169 +176,207 @@ const AdminNuevoUsuario = () => {
       >
         <div
           className="card shadow-sm p-4"
-          style={{ maxWidth: "600px", width: "100%", background: "#f8f9fa" }}
+          style={{ maxWidth: "800px", width: "100%", background: "#f8f9fa" }}
         >
-          <h5 className="fw-bold mb-4">Registro de usuario</h5>
+          <h5 className="fw-bold mb-4 text-primary">Datos del Usuario</h5>
+          <p className="text-muted small mb-4">
+            Los campos marcados con (*) son obligatorios. Los demás se
+            rellenarán automáticamente si se dejan vacíos.
+          </p>
 
           <form onSubmit={handleSubmit}>
-            <div className="mb-3">
-              <label htmlFor="nombres" className="form-label">
-                NOMBRES
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="nombres"
-                autoComplete="given-name"
-                value={formData.nombres}
-                onChange={handleChange}
-                required
-              />
+            <div className="row g-3">
+              {/* --- DATOS OBLIGATORIOS (Izquierda) --- */}
+              <div className="col-md-6">
+                <h6 className="text-success border-bottom pb-2 mb-3">
+                  Credenciales y Básicos
+                </h6>
+
+                <div className="mb-3">
+                  <label htmlFor="nombre" className="form-label fw-bold">
+                    Nombre *
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="nombre"
+                    value={formData.nombre}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="apellido" className="form-label fw-bold">
+                    Apellido *
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="apellido"
+                    value={formData.apellido}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="rut" className="form-label fw-bold">
+                    RUT *
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="rut"
+                    placeholder="12.345.678-9"
+                    value={formData.rut}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="correo" className="form-label fw-bold">
+                    Correo Electrónico *
+                  </label>
+                  <input
+                    type="email"
+                    className="form-control"
+                    id="correo"
+                    value={formData.correo}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="contrasena" className="form-label fw-bold">
+                    Contraseña *
+                  </label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    id="contrasena"
+                    value={formData.contrasena}
+                    onChange={handleChange}
+                    required
+                    minLength={6}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label
+                    htmlFor="rol"
+                    className="form-label fw-bold text-primary"
+                  >
+                    Rol de Usuario *
+                  </label>
+                  <select
+                    className="form-select border-primary"
+                    id="rol"
+                    value={formData.rol}
+                    onChange={handleChange}
+                  >
+                    <option value="CLIENTE">CLIENTE</option>
+                    <option value="VENDEDOR">VENDEDOR</option>
+                    <option value="ADMIN">ADMINISTRADOR</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* --- DATOS OPCIONALES (Derecha) --- */}
+              <div className="col-md-6">
+                <h6 className="text-secondary border-bottom pb-2 mb-3">
+                  Detalles (Opcional)
+                </h6>
+
+                <div className="mb-3">
+                  <label htmlFor="telefono" className="form-label">
+                    Teléfono
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="telefono"
+                    value={formData.telefono}
+                    onChange={handleChange}
+                    placeholder="Opcional"
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label htmlFor="fechaNacimiento" className="form-label">
+                    Fecha de Nacimiento
+                  </label>
+                  <input
+                    type="date"
+                    className="form-control"
+                    id="fechaNacimiento"
+                    value={formData.fechaNacimiento}
+                    onChange={handleChange}
+                  />
+                  <div className="form-text text-muted">
+                    Si se omite, se usará la fecha de hoy.
+                  </div>
+                </div>
+
+                <div className="mb-3">
+                  <label htmlFor="direccion" className="form-label">
+                    Dirección
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="direccion"
+                    value={formData.direccion}
+                    onChange={handleChange}
+                    placeholder="Calle, número..."
+                  />
+                </div>
+
+                <div className="row">
+                  <div className="col-6 mb-3">
+                    <label htmlFor="region" className="form-label">
+                      Región
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="region"
+                      value={formData.region}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="col-6 mb-3">
+                    <label htmlFor="comuna" className="form-label">
+                      Comuna
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="comuna"
+                      value={formData.comuna}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div className="mb-3">
-              <label htmlFor="apellidos" className="form-label">
-                APELLIDOS
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="apellidos"
-                autoComplete="family-name"
-                value={formData.apellidos}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="mb-3">
-              <label htmlFor="correo" className="form-label">
-                CORREO
-              </label>
-              <input
-                type="email"
-                className="form-control"
-                id="correo"
-                autoComplete="email"
-                value={formData.correo}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="mb-3">
-              <label htmlFor="rol" className="form-label">
-                ROL
-              </label>
-              <select
-                className="form-select"
-                id="rol"
-                value={formData.rol}
-                onChange={handleChange}
-                required
+            <div className="d-grid gap-2 mt-4">
+              <button
+                type="submit"
+                className="btn btn-success fw-bold py-2 shadow-sm"
+                disabled={loading}
               >
-                <option value="">Seleccione un rol</option>
-                <option value="admin">Administrador</option>
-                <option value="vendedor">Vendedor</option>
-                <option value="visualizador">Visualizador</option>
-              </select>
+                {loading ? (
+                  <span>
+                    <span className="spinner-border spinner-border-sm me-2"></span>
+                    Creando...
+                  </span>
+                ) : (
+                  <span>
+                    <i className="bi bi-check-circle-fill me-2"></i>CREAR
+                    USUARIO
+                  </span>
+                )}
+              </button>
             </div>
-
-            <div className="mb-3">
-              <label htmlFor="contraseña" className="form-label">
-                CONTRASEÑA
-              </label>
-              <input
-                type="password"
-                className="form-control"
-                id="contraseña"
-                autoComplete="new-password"
-                value={formData.contraseña}
-                onChange={handleChange}
-                required
-              />
-              <div className="form-text">Mínimo 8 caracteres.</div>
-            </div>
-
-            <div className="mb-3">
-              <label htmlFor="confirmar" className="form-label">
-                CONFIRMAR CONTRASEÑA
-              </label>
-              <input
-                type="password"
-                className="form-control"
-                id="confirmar"
-                autoComplete="new-password"
-                value={formData.confirmar}
-                onChange={handleChange}
-                required
-              />
-              <div className="form-text">Repite la contraseña.</div>
-            </div>
-
-            <div className="mb-3">
-              <label htmlFor="telefono" className="form-label">
-                TELÉFONO (opcional)
-              </label>
-              <input
-                type="tel"
-                className="form-control"
-                id="telefono"
-                value={formData.telefono}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="row mb-3">
-              <div className="col-md-6">
-                <label htmlFor="region" className="form-label">
-                  Región
-                </label>
-                <select
-                  className="form-select"
-                  id="region"
-                  value={formData.region}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="">Seleccione la región...</option>
-                  {Object.keys(comunasPorRegion).map((r) => (
-                    <option key={r} value={r}>
-                      {r}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="col-md-6">
-                <label htmlFor="comuna" className="form-label">
-                  Comuna
-                </label>
-                <select
-                  className="form-select"
-                  id="comuna"
-                  value={formData.comuna}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="">Seleccione la comuna...</option>
-                  {(comunasPorRegion[formData.region] || []).map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <button type="submit" className="btn btn-dark w-100 mt-2">
-              REGISTRAR
-            </button>
-
-            <div
-              className="validation-errors text-danger mt-2"
-              aria-live="polite"
-            ></div>
           </form>
         </div>
       </section>

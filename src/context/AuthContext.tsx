@@ -1,5 +1,6 @@
+// src/context/AuthContext.tsx
 import React, { createContext, useContext, useEffect, useState } from "react";
-import axios from "axios"; // <--- CORRECCIÓN 1: Importar la librería 'axios' (para usar isAxiosError)
+import axios from "axios";
 import { authApi, usersApi } from "../services/api";
 
 type SafeUser = {
@@ -9,16 +10,16 @@ type SafeUser = {
   rol: string;
 } | null;
 
-// CORRECCIÓN 3: Actualizar la interfaz para que coincida con la implementación
 type AuthContextShape = {
   user: SafeUser;
   isAuthenticated: boolean;
-  login: (correo: string, password: string) => Promise<boolean>;
+  // CAMBIO 1: Ahora devuelve SafeUser si es exitoso, o false si falla
+  login: (correo: string, password: string) => Promise<SafeUser | false>;
   logout: () => void;
   register: (data: {
     nombres: string;
     apellidos: string;
-    rut: string; // <--- NUEVO: Ahora es obligatorio pedirlo
+    rut: string;
     correo: string;
     password: string;
     rol?: string;
@@ -79,7 +80,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       localStorage.setItem("user", JSON.stringify(safe));
       setUser(safe);
-      return true;
+
+      // CAMBIO 2: Devolvemos el objeto usuario en lugar de true
+      return safe;
     } catch (error) {
       console.error("Error en login:", error);
       localStorage.removeItem("token");
@@ -96,7 +99,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const register = async (data: {
     nombres: string;
     apellidos: string;
-    rut: string; // <--- Recibimos el RUT
+    rut: string;
     correo: string;
     password: string;
     rol?: string;
@@ -109,7 +112,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         contrasena: data.password,
         rol: "CLIENTE",
         rut: data.rut,
-
         comuna: "Sin comuna",
         region: "Sin región",
         direccion: "Sin dirección",
@@ -121,9 +123,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       await authApi.register(requestData);
 
-      const loginSuccess = await login(data.correo, data.password);
+      const loggedUser = await login(data.correo, data.password);
 
-      if (!loginSuccess) {
+      if (!loggedUser) {
+        // CAMBIO 3: Chequeo simple (objeto es truthy, false es falsy)
         throw new Error("Error al iniciar sesión después del registro");
       }
 

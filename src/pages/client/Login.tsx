@@ -15,30 +15,38 @@ const Login = () => {
     e.preventDefault();
     setError("");
 
-    // Validaciones básicas
     if (!correo || !contraseña) {
       setError("Por favor, completa todos los campos");
       return;
     }
 
-    // Validación de email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(correo)) {
       setError("Por favor, ingresa un correo válido");
       return;
     }
 
-    const ok = await login(correo, contraseña);
-    if (!ok) {
+    // CAMBIO AQUÍ: Capturamos el resultado que ahora puede ser el usuario
+    const loggedUser = await login(correo, contraseña);
+
+    if (!loggedUser) {
       setError("Correo o contraseña incorrectos");
       return;
     }
 
     alert(`¡Bienvenido! Has iniciado sesión como ${correo}`);
-    navigate("/");
+
+    // LÓGICA DE REDIRECCIÓN SEGÚN ROL
+    // Verificamos si el rol contiene "ADMIN" (para cubrir ROLE_ADMIN o ADMIN)
+    if (loggedUser.rol.includes("ADMIN")) {
+      navigate("/admin");
+    } else {
+      navigate("/");
+    }
   };
 
   return (
+    // ... (El resto del JSX se mantiene igual)
     <main>
       <section
         className="container d-flex flex-column align-items-center justify-content-center"
@@ -55,7 +63,6 @@ const Login = () => {
           Level-Up Gamer
         </h2>
 
-        {/* Card con el formulario de login */}
         <article
           className="card bg-dark text-light shadow-lg p-4"
           style={{ maxWidth: "400px", width: "100%" }}

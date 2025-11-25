@@ -1,14 +1,18 @@
 // src/pages/admin/AdminEditarProducto.tsx
-import { useState, FormEvent, useEffect } from "react";
-import { Link, useSearchParams, useNavigate } from "react-router-dom";
-import { getProductById, updateProduct } from "../../utils/productService";
+import { useState, useEffect, FormEvent } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import {
+  getProductById,
+  updateProduct,
+  Product,
+} from "../../utils/productService";
 
 const AdminEditarProducto = () => {
-  const navigate = useNavigate(); 
-  const [buscarId, setBuscarId] = useState("");
-  const [productoEncontrado, setProductoEncontrado] = useState(false);
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const id = searchParams.get("id"); // Obtenemos el ID de la URL (?id=...)
+
   const [formData, setFormData] = useState({
-    id: "",
     nombre: "",
     descripcion: "",
     categoria: "",
@@ -17,62 +21,55 @@ const AdminEditarProducto = () => {
     imagen: "",
   });
 
+  const [loading, setLoading] = useState(false); // Cargando al guardar
+  const [initialLoading, setInitialLoading] = useState(true); // Cargando datos iniciales
+
   const categorias = [
-    { value: "Juegos de Mesa", label: "Juegos de Mesa" },
-    { value: "Consola", label: "Consola" },
-    { value: "Computador Gamer", label: "Computador Gamer" },
-    { value: "Silla Gamer", label: "Silla Gamer" },
-    { value: "Accesorios", label: "Accesorios" },
-    { value: "Ropa", label: "Ropa" },
-    { value: "Mouse", label: "Mouse" },
-    { value: "Mousepad", label: "Mousepad" },
+    "Juegos de Mesa",
+    "Consola",
+    "Computador Gamer",
+    "Silla Gamer",
+    "Accesorios",
+    "Ropa",
+    "Mouse",
+    "Mousepad",
   ];
 
-  const handleBuscar = () => {
-    console.log("Buscando producto con ID:", buscarId);
-    if (!buscarId) {
-      alert("Por favor ingresa un ID");
+  // 1. Cargar datos al entrar
+  useEffect(() => {
+    if (!id) {
+      alert("No se especificó un ID de producto");
+      navigate("/admin/productos/mostrar");
       return;
     }
-    const p = getProductById(buscarId);
-    if (p) {
-      setProductoEncontrado(true);
-      setFormData({
-        id: p.id,
-        nombre: p.nombre,
-        descripcion: p.descripcion,
-        categoria: p.categoria,
-        precio: String(p.precio),
-        stock: String(p.stock),
-        imagen: p.imagen,
-      });
-      alert("Producto encontrado");
-    } else {
-      alert("Producto no encontrado");
-    }
-  };
 
-  const [searchParams] = useSearchParams();
-
-  useEffect(() => {
-    const id = searchParams.get("id");
-    if (id) {
-      setBuscarId(id);
-      const p = getProductById(id);
-      if (p) {
-        setProductoEncontrado(true);
-        setFormData({
-          id: p.id,
-          nombre: p.nombre,
-          descripcion: p.descripcion,
-          categoria: p.categoria,
-          precio: String(p.precio),
-          stock: String(p.stock),
-          imagen: p.imagen,
-        });
+    const cargarProducto = async () => {
+      try {
+        const producto = await getProductById(id);
+        if (producto) {
+          // Rellenamos el formulario con los datos existentes
+          setFormData({
+            nombre: producto.nombre,
+            descripcion: producto.descripcion,
+            categoria: producto.categoria,
+            precio: producto.precio.toString(),
+            stock: producto.stock.toString(),
+            imagen: producto.imagen,
+          });
+        } else {
+          alert("Producto no encontrado");
+          navigate("/admin/productos/mostrar");
+        }
+      } catch (error) {
+        console.error("Error al cargar producto:", error);
+        alert("Error al cargar los datos del producto");
+      } finally {
+        setInitialLoading(false);
       }
-    }
-  }, [searchParams]);
+    };
+
+    cargarProducto();
+  }, [id, navigate]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -85,105 +82,119 @@ const AdminEditarProducto = () => {
     });
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const updated = {
-      id: formData.id,
-      nombre: formData.nombre,
-      descripcion: formData.descripcion,
-      categoria: formData.categoria,
-      precio: Number(formData.precio),
-      stock: Number(formData.stock),
-      imagen: formData.imagen,
-    };
-    const ok = updateProduct(updated as any);
-    if (ok) {
-      alert("Producto actualizado");
-    
-      navigate("/admin/productos/mostrar");
-    } else {
-      alert("No se pudo actualizar el producto");
+    if (!id) return;
+
+    setLoading(true);
+
+    try {
+      // Preparamos el objeto actualizado
+      const productoActualizado: Product = {
+        id: id, // Mantenemos el mismo ID
+        nombre: formData.nombre,
+        descripcion: formData.descripcion,
+        categoria: formData.categoria,
+        precio: Number(formData.precio),
+        stock: Number(formData.stock),
+        imagen: formData.imagen,
+      };
+
+      const exito = await updateProduct(productoActualizado);
+
+      if (exito) {
+        alert("¡Producto actualizado correctamente!");
+        navigate("/admin/productos/mostrar");
+      } else {
+        throw new Error("Falló la actualización");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Error al actualizar el producto. Verifica tus permisos.");
+    } finally {
+      setLoading(false);
     }
   };
 
+  if (initialLoading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center vh-100">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Cargando...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <main id="main-admin" className="col px-0">
-      {/* Submenu - CON ESTILOS LEGIBLES */}
-      <aside 
+      {/* Submenu */}
+      <aside
         style={{
-          backgroundColor: '#f8f9fa',
-          borderBottom: '2px solid #dee2e6',
-          padding: '1rem 1.5rem',
-          display: 'flex'
+          backgroundColor: "#f8f9fa",
+          borderBottom: "2px solid #dee2e6",
+          padding: "1rem 1.5rem",
+          display: "flex",
         }}
       >
-        <ul className="nav" style={{ gap: '0.5rem', display: 'flex', margin: 0, padding: 0, listStyle: 'none' }}>
+        <ul
+          className="nav"
+          style={{
+            gap: "0.5rem",
+            display: "flex",
+            margin: 0,
+            padding: 0,
+            listStyle: "none",
+          }}
+        >
           <li>
-            <Link 
+            <Link
               to="/admin/productos/nuevo"
               style={{
-                color: '#212529',
-                fontWeight: '600',
-                fontSize: '1rem',
-                padding: '0.6rem 1.2rem',
-                backgroundColor: 'transparent',
-                borderRadius: '6px',
-                textDecoration: 'none',
-                display: 'block',
-                transition: 'all 0.2s',
-                border: '1px solid transparent'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#e9ecef';
-                e.currentTarget.style.borderColor = '#dee2e6';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-                e.currentTarget.style.borderColor = 'transparent';
+                color: "#212529",
+                fontWeight: "600",
+                fontSize: "1rem",
+                padding: "0.6rem 1.2rem",
+                backgroundColor: "transparent",
+                borderRadius: "6px",
+                textDecoration: "none",
+                display: "block",
+                border: "1px solid transparent",
               }}
             >
               Nuevo Producto
             </Link>
           </li>
           <li>
-            <Link 
+            <Link
               to="/admin/productos/editar"
               style={{
-                color: '#ffffff',
-                fontWeight: '700',
-                fontSize: '1rem',
-                padding: '0.6rem 1.2rem',
-                backgroundColor: '#0d6efd',
-                borderRadius: '6px',
-                textDecoration: 'none',
-                display: 'block'
+                color: "#ffffff",
+                fontWeight: "700",
+                fontSize: "1rem",
+                padding: "0.6rem 1.2rem",
+                backgroundColor: "#0d6efd",
+                borderRadius: "6px",
+                textDecoration: "none",
+                display: "block",
               }}
             >
               Editar Producto
             </Link>
           </li>
           <li>
-            <Link 
+            <Link
               to="/admin/productos/mostrar"
               style={{
-                color: '#212529',
-                fontWeight: '600',
-                fontSize: '1rem',
-                padding: '0.6rem 1.2rem',
-                backgroundColor: 'transparent',
-                borderRadius: '6px',
-                textDecoration: 'none',
-                display: 'block',
-                transition: 'all 0.2s',
-                border: '1px solid transparent'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#e9ecef';
-                e.currentTarget.style.borderColor = '#dee2e6';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-                e.currentTarget.style.borderColor = 'transparent';
+                color: "#212529",
+                fontWeight: "600",
+                fontSize: "1rem",
+                padding: "0.6rem 1.2rem",
+                backgroundColor: "transparent",
+                borderRadius: "6px",
+                textDecoration: "none",
+                display: "block",
+                border: "1px solid transparent",
               }}
             >
               Mostrar Productos
@@ -193,7 +204,9 @@ const AdminEditarProducto = () => {
       </aside>
 
       <header className="admin-header p-4 bg-white border-bottom">
-        <h3 className="fw-bold mb-0 text-dark">Editor de Producto</h3>
+        <h3 className="fw-bold mb-0 text-dark">
+          Editar Producto <span className="text-muted fs-5">#{id}</span>
+        </h3>
       </header>
 
       <section
@@ -204,34 +217,9 @@ const AdminEditarProducto = () => {
           className="card shadow-sm p-4"
           style={{ maxWidth: "600px", width: "100%", background: "#f8f9fa" }}
         >
-          <h5 className="fw-bold mb-4">Editor de producto</h5>
+          <h5 className="fw-bold mb-4">Modificar datos</h5>
 
           <form onSubmit={handleSubmit}>
-            {/* Campo de búsqueda por ID */}
-            <div className="mb-3">
-              <label htmlFor="idProducto" className="form-label">
-                ID DEL PRODUCTO
-              </label>
-              <div className="input-group">
-                <input
-                  type="text"
-                  className="form-control"
-                  id="idProducto"
-                  placeholder="Ingresa el ID para buscar"
-                  value={buscarId}
-                  onChange={(e) => setBuscarId(e.target.value)}
-                />
-                <button
-                  type="button"
-                  className="btn btn-outline-secondary"
-                  onClick={handleBuscar}
-                >
-                  Buscar
-                </button>
-              </div>
-            </div>
-
-            {/* Campos del formulario (deshabilitados hasta buscar) */}
             <div className="mb-3">
               <label htmlFor="nombre" className="form-label">
                 NOMBRE DEL PRODUCTO
@@ -242,7 +230,6 @@ const AdminEditarProducto = () => {
                 id="nombre"
                 value={formData.nombre}
                 onChange={handleChange}
-                disabled={!productoEncontrado}
                 required
               />
             </div>
@@ -257,7 +244,6 @@ const AdminEditarProducto = () => {
                 rows={3}
                 value={formData.descripcion}
                 onChange={handleChange}
-                disabled={!productoEncontrado}
                 required
               />
             </div>
@@ -271,13 +257,12 @@ const AdminEditarProducto = () => {
                 id="categoria"
                 value={formData.categoria}
                 onChange={handleChange}
-                disabled={!productoEncontrado}
                 required
               >
                 <option value="">Seleccione la categoría...</option>
                 {categorias.map((cat) => (
-                  <option key={cat.value} value={cat.value}>
-                    {cat.label}
+                  <option key={cat} value={cat}>
+                    {cat}
                   </option>
                 ))}
               </select>
@@ -288,13 +273,13 @@ const AdminEditarProducto = () => {
                 PRECIO
               </label>
               <input
-                type="text"
+                type="number"
                 className="form-control"
                 id="precio"
                 value={formData.precio}
                 onChange={handleChange}
-                disabled={!productoEncontrado}
                 required
+                min="0"
               />
             </div>
 
@@ -309,7 +294,6 @@ const AdminEditarProducto = () => {
                 min="0"
                 value={formData.stock}
                 onChange={handleChange}
-                disabled={!productoEncontrado}
                 required
               />
             </div>
@@ -324,18 +308,41 @@ const AdminEditarProducto = () => {
                 id="imagen"
                 value={formData.imagen}
                 onChange={handleChange}
-                disabled={!productoEncontrado}
                 required
               />
+              {/* Previsualización pequeña de la imagen */}
+              {formData.imagen && (
+                <div className="mt-2 text-center">
+                  <img
+                    src={formData.imagen}
+                    alt="Previsualización"
+                    style={{
+                      maxHeight: "100px",
+                      borderRadius: "4px",
+                      border: "1px solid #ddd",
+                    }}
+                    onError={(e) => (e.currentTarget.style.display = "none")}
+                  />
+                </div>
+              )}
             </div>
 
-            <button
-              type="submit"
-              className="btn btn-dark w-100 mt-2"
-              disabled={!productoEncontrado}
-            >
-              Actualizar Producto
-            </button>
+            <div className="d-flex gap-2">
+              <button
+                type="button"
+                className="btn btn-outline-secondary w-50"
+                onClick={() => navigate("/admin/productos/mostrar")}
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                className="btn btn-primary w-50"
+                disabled={loading}
+              >
+                {loading ? "Guardando..." : "GUARDAR CAMBIOS"}
+              </button>
+            </div>
           </form>
         </div>
       </section>

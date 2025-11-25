@@ -1,5 +1,5 @@
 // src/services/api.ts
-import axiosInstance from '../config/axios';
+import axiosInstance from "../config/axios";
 
 // ==================== AUTH API ====================
 
@@ -16,22 +16,27 @@ export interface LoginResponse {
 
 export interface RegisterRequest {
   nombre: string;
+  apellido: string;
   correo: string;
   contrasena: string;
-  rut?: string;
+  rut: string;
   telefono?: string;
   direccion?: string;
+  region?: string;
+  comuna?: string;
+  fechaNacimiento?: number;
   rol?: string;
 }
 
 export const authApi = {
   login: async (data: LoginRequest): Promise<LoginResponse> => {
-    const response = await axiosInstance.post('/login', data);
+    const response = await axiosInstance.post("/login", data);
     return response.data;
   },
 
   register: async (data: RegisterRequest) => {
-    const response = await axiosInstance.post('/api/v1/users', data);
+    // Apunta a la ruta pública
+    const response = await axiosInstance.post("/api/v1/users/register", data);
     return response.data;
   },
 };
@@ -52,9 +57,16 @@ export interface UserResponse {
 
 export const usersApi = {
   getAll: async (): Promise<UserResponse[]> => {
-    const response = await axiosInstance.get('/api/v1/users');
+    const response = await axiosInstance.get("/api/v1/users");
     return response.data;
   },
+
+  // <--- 2. AQUÍ ESTÁ LA SOLUCIÓN AL ERROR: Agregamos getProfile
+  getProfile: async (): Promise<UserResponse> => {
+    const response = await axiosInstance.get("/api/v1/users/profile");
+    return response.data;
+  },
+  // ---------------------------------------------------------
 
   getById: async (id: number): Promise<UserResponse> => {
     const response = await axiosInstance.get(`/api/v1/users/${id}`);
@@ -62,11 +74,14 @@ export const usersApi = {
   },
 
   create: async (data: RegisterRequest): Promise<UserResponse> => {
-    const response = await axiosInstance.post('/api/v1/users', data);
+    const response = await axiosInstance.post("/api/v1/users", data);
     return response.data;
   },
 
-  update: async (id: number, data: Partial<RegisterRequest>): Promise<UserResponse> => {
+  update: async (
+    id: number,
+    data: Partial<RegisterRequest>
+  ): Promise<UserResponse> => {
     const response = await axiosInstance.put(`/api/v1/users/${id}`, data);
     return response.data;
   },
@@ -101,7 +116,7 @@ export interface ProductRequest {
 
 export const productsApi = {
   getAll: async (): Promise<ProductResponse[]> => {
-    const response = await axiosInstance.get('/api/v1/products');
+    const response = await axiosInstance.get("/api/v1/products");
     return response.data;
   },
 
@@ -111,11 +126,14 @@ export const productsApi = {
   },
 
   create: async (data: ProductRequest): Promise<ProductResponse> => {
-    const response = await axiosInstance.post('/api/v1/products', data);
+    const response = await axiosInstance.post("/api/v1/products", data);
     return response.data;
   },
 
-  update: async (id: number, data: Partial<ProductRequest>): Promise<ProductResponse> => {
+  update: async (
+    id: number,
+    data: Partial<ProductRequest>
+  ): Promise<ProductResponse> => {
     const response = await axiosInstance.put(`/api/v1/products/${id}`, data);
     return response.data;
   },
@@ -167,7 +185,7 @@ export interface OrderResponse {
 
 export const ordersApi = {
   getAll: async (): Promise<OrderResponse[]> => {
-    const response = await axiosInstance.get('/api/v1/orders');
+    const response = await axiosInstance.get("/api/v1/orders");
     return response.data;
   },
 
@@ -177,11 +195,14 @@ export const ordersApi = {
   },
 
   create: async (data: OrderRequest): Promise<OrderResponse> => {
-    const response = await axiosInstance.post('/api/v1/orders', data);
+    const response = await axiosInstance.post("/api/v1/orders", data);
     return response.data;
   },
 
-  update: async (id: number, data: Partial<OrderRequest>): Promise<OrderResponse> => {
+  update: async (
+    id: number,
+    data: Partial<OrderRequest>
+  ): Promise<OrderResponse> => {
     const response = await axiosInstance.put(`/api/v1/orders/${id}`, data);
     return response.data;
   },

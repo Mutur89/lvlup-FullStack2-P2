@@ -5,6 +5,8 @@ import { useAuth } from "../../context/AuthContext";
 
 const Registro = () => {
   const [nombre, setNombre] = useState("");
+  const [apellido, setApellido] = useState("");
+  const [rut, setRut] = useState(""); // <--- 1. NUEVO ESTADO
   const [correo, setCorreo] = useState("");
   const [contraseña, setContraseña] = useState("");
   const [confirmarContraseña, setConfirmarContraseña] = useState("");
@@ -17,7 +19,14 @@ const Registro = () => {
     setError("");
 
     // Validaciones
-    if (!nombre || !correo || !contraseña || !confirmarContraseña) {
+    if (
+      !nombre ||
+      !apellido ||
+      !rut ||
+      !correo ||
+      !contraseña ||
+      !confirmarContraseña
+    ) {
       setError("Por favor, completa todos los campos");
       return;
     }
@@ -41,9 +50,16 @@ const Registro = () => {
     }
 
     try {
-      await register({ nombres: nombre, correo, password: contraseña });
+      // 3. Enviar el RUT a la función
+      await register({
+        nombres: nombre,
+        apellidos: apellido,
+        rut: rut, // <--- Enviamos el estado
+        correo,
+        password: contraseña,
+      });
+
       alert(`¡Registro exitoso! Bienvenido ${nombre}`);
-      // Auto-login: el register en AuthContext ya inicia sesión, redirigimos al home
       navigate("/");
     } catch (err: any) {
       setError(err?.message || "Error al crear usuario");
@@ -83,7 +99,7 @@ const Registro = () => {
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label htmlFor="nombre" className="form-label">
-                NOMBRE COMPLETO
+                NOMBRE
               </label>
               <input
                 type="text"
@@ -91,6 +107,36 @@ const Registro = () => {
                 id="nombre"
                 value={nombre}
                 onChange={(e) => setNombre(e.target.value)}
+                required
+              />
+            </div>
+
+            {/* --- AGREGAR ESTE BLOQUE PARA EL APELLIDO --- */}
+            <div className="mb-3">
+              <label htmlFor="apellido" className="form-label">
+                APELLIDO
+              </label>
+              <input
+                type="text"
+                className="form-control bg-dark text-light border-secondary"
+                id="apellido"
+                value={apellido}
+                onChange={(e) => setApellido(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="rut" className="form-label">
+                RUT
+              </label>
+              <input
+                type="text"
+                className="form-control bg-dark text-light border-secondary"
+                id="rut"
+                value={rut}
+                onChange={(e) => setRut(e.target.value)}
+                placeholder="Ej: 12.345.678-9"
                 required
               />
             </div>

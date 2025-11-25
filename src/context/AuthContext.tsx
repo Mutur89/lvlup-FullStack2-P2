@@ -1,20 +1,24 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import axios from "axios"; // <--- CORRECCIÓN 1: Importar la librería 'axios' (para usar isAxiosError)
 import { authApi, usersApi } from "../services/api";
 
 type SafeUser = {
   id: string;
-  nombre?: string;
-  correo?: string;
-  rol?: string;
+  nombre: string;
+  correo: string;
+  rol: string;
 } | null;
 
+// CORRECCIÓN 3: Actualizar la interfaz para que coincida con la implementación
 type AuthContextShape = {
   user: SafeUser;
   isAuthenticated: boolean;
   login: (correo: string, password: string) => Promise<boolean>;
   logout: () => void;
   register: (data: {
-    nombres?: string;
+    nombres: string;
+    apellidos: string;
+    rut: string; // <--- NUEVO: Ahora es obligatorio pedirlo
     correo: string;
     password: string;
     rol?: string;
@@ -57,25 +61,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const login = async (correo: string, password: string) => {
     try {
-      // Llamar al backend para autenticar
       const response = await authApi.login({
         correo,
         contrasena: password,
       });
 
-      // Guardar el token JWT
       localStorage.setItem("token", response.token);
 
-      // Obtener información del usuario desde el backend
-      // El username en la respuesta es el correo
-      const users = await usersApi.getAll();
-      const userData = users.find((u) => u.correo === correo);
-
-      if (!userData) {
-        // Si no encontramos el usuario, limpiar y retornar false
-        localStorage.removeItem("token");
-        return false;
-      }
+      const userData = await usersApi.getProfile();
 
       const safe = {
         id: userData.id.toString(),
@@ -89,6 +82,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       return true;
     } catch (error) {
       console.error("Error en login:", error);
+      localStorage.removeItem("token");
       return false;
     }
   };
@@ -100,37 +94,47 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const register = async (data: {
-    nombres?: string;
+    nombres: string;
+    apellidos: string;
+    rut: string; // <--- Recibimos el RUT
     correo: string;
     password: string;
     rol?: string;
   }) => {
     try {
-      // Crear usuario en el backend
-      const created = await usersApi.create({
-        nombre: data.nombres || "",
+      const requestData = {
+        nombre: data.nombres,
+        apellido: data.apellidos,
         correo: data.correo,
         contrasena: data.password,
-        rol: data.rol || "CLIENTE",
-      });
+        rol: "CLIENTE",
+        rut: data.rut,
 
-      const safe = {
-        id: created.id.toString(),
-        nombre: created.nombre,
-        correo: created.correo,
-        rol: created.rol,
+        comuna: "Sin comuna",
+        region: "Sin región",
+        direccion: "Sin dirección",
+        telefono: "00000000",
+        fechaNacimiento: Date.now(),
       };
 
-      // Auto-login después del registro
+      console.log("Enviando al backend:", requestData);
+
+      await authApi.register(requestData);
+
       const loginSuccess = await login(data.correo, data.password);
+
       if (!loginSuccess) {
         throw new Error("Error al iniciar sesión después del registro");
       }
 
-      return safe;
+      const rawUser = localStorage.getItem("user");
+      return rawUser ? JSON.parse(rawUser) : null;
     } catch (error) {
       console.error("Error en registro:", error);
-      return null;
+      if (axios.isAxiosError(error) && error.response?.data) {
+        console.error("Detalle del error:", error.response.data);
+      }
+      throw error;
     }
   };
 

@@ -42,64 +42,64 @@ const AdminDashboard = () => {
       {/* Dashboard Content */}
       <section className="admin-content py-4">
         <div className="container-fluid">
-          {/* Stats Cards - MEJORADAS CON MEJOR CONTRASTE */}
+          {/* Stats Cards - MEJORADAS CON MEJOR CONTRASTE Y RESPONSIVIDAD */}
           <div className="row g-3 mb-4">
             {/* Card Productos */}
-            <div className="col-12 col-sm-6 col-md-3">
-              <div className="card shadow-sm border-0" style={{ background: '#1e293b' }}>
-                <div className="card-body d-flex align-items-center justify-content-between p-4">
-                  <div>
-                    <h6 className="mb-2 fw-semibold" style={{ fontSize: '0.875rem', color: '#000000', textShadow: '0 0 5px #39ff14, 0 0 10px #39ff14' }}>
+            <div className="col-12 col-sm-6 col-lg-3">
+              <div className="card shadow-sm border-0" style={{ background: '#f8f9fa' }}>
+                <div className="card-body d-flex align-items-center justify-content-between p-3" style={{ minHeight: '100px' }}>
+                  <div style={{ flex: '1 1 auto', minWidth: 0, marginRight: '0.5rem' }}>
+                    <h6 className="mb-2 fw-semibold text-dark" style={{ fontSize: '0.875rem', wordWrap: 'break-word' }}>
                       Productos
                     </h6>
-                    <h2 className="mb-0 fw-bold text-white">{stats.productos}</h2>
+                    <h2 className="mb-0 fw-bold text-primary" style={{ fontSize: '2rem' }}>{stats.productos}</h2>
                   </div>
-                  <i className="bi bi-box-seam text-primary" style={{ fontSize: '3rem' }}></i>
+                  <i className="bi bi-box-seam text-primary" style={{ fontSize: '2.5rem', flexShrink: 0 }}></i>
                 </div>
               </div>
             </div>
 
             {/* Card Usuarios */}
-            <div className="col-12 col-sm-6 col-md-3">
-              <div className="card shadow-sm border-0" style={{ background: '#1e293b' }}>
-                <div className="card-body d-flex align-items-center justify-content-between p-4">
-                  <div>
-                    <h6 className="mb-2 fw-semibold" style={{ fontSize: '0.875rem', color: '#000000', textShadow: '0 0 5px #39ff14, 0 0 10px #39ff14' }}>
+            <div className="col-12 col-sm-6 col-lg-3">
+              <div className="card shadow-sm border-0" style={{ background: '#f8f9fa' }}>
+                <div className="card-body d-flex align-items-center justify-content-between p-3" style={{ minHeight: '100px' }}>
+                  <div style={{ flex: '1 1 auto', minWidth: 0, marginRight: '0.5rem' }}>
+                    <h6 className="mb-2 fw-semibold text-dark" style={{ fontSize: '0.875rem', wordWrap: 'break-word' }}>
                       Usuarios
                     </h6>
-                    <h2 className="mb-0 fw-bold text-white">{stats.usuarios}</h2>
+                    <h2 className="mb-0 fw-bold text-success" style={{ fontSize: '2rem' }}>{stats.usuarios}</h2>
                   </div>
-                  <i className="bi bi-people text-success" style={{ fontSize: '3rem' }}></i>
+                  <i className="bi bi-people text-success" style={{ fontSize: '2.5rem', flexShrink: 0 }}></i>
                 </div>
               </div>
             </div>
 
             {/* Card Pedidos Activos */}
-            <div className="col-12 col-sm-6 col-md-3">
-              <div className="card shadow-sm border-0" style={{ background: '#1e293b' }}>
-                <div className="card-body d-flex align-items-center justify-content-between p-4">
-                  <div>
-                    <h6 className="mb-2 fw-semibold" style={{ fontSize: '0.875rem', color: '#000000', textShadow: '0 0 5px #39ff14, 0 0 10px #39ff14' }}>
+            <div className="col-12 col-sm-6 col-lg-3">
+              <div className="card shadow-sm border-0" style={{ background: '#f8f9fa' }}>
+                <div className="card-body d-flex align-items-center justify-content-between p-3" style={{ minHeight: '100px' }}>
+                  <div style={{ flex: '1 1 auto', minWidth: 0, marginRight: '0.5rem' }}>
+                    <h6 className="mb-2 fw-semibold text-dark" style={{ fontSize: '0.875rem', wordWrap: 'break-word' }}>
                       Pedidos activos
                     </h6>
-                    <h2 className="mb-0 fw-bold text-white">{stats.pedidosActivos}</h2>
+                    <h2 className="mb-0 fw-bold text-warning" style={{ fontSize: '2rem' }}>{stats.pedidosActivos}</h2>
                   </div>
-                  <i className="bi bi-bag-check text-warning" style={{ fontSize: '3rem' }}></i>
+                  <i className="bi bi-bag-check text-warning" style={{ fontSize: '2.5rem', flexShrink: 0 }}></i>
                 </div>
               </div>
             </div>
 
             {/* Card Productos Bajo Stock */}
-            <div className="col-12 col-sm-6 col-md-3">
-              <div className="card shadow-sm border-0" style={{ background: '#1e293b' }}>
-                <div className="card-body d-flex align-items-center justify-content-between p-4">
-                  <div>
-                    <h6 className="mb-2 fw-semibold" style={{ fontSize: '0.875rem', color: '#000000', textShadow: '0 0 5px #39ff14, 0 0 10px #39ff14' }}>
+            <div className="col-12 col-sm-6 col-lg-3">
+              <div className="card shadow-sm border-0" style={{ background: '#f8f9fa' }}>
+                <div className="card-body d-flex align-items-center justify-content-between p-3" style={{ minHeight: '100px' }}>
+                  <div style={{ flex: '1 1 auto', minWidth: 0, marginRight: '0.5rem' }}>
+                    <h6 className="mb-2 fw-semibold text-dark" style={{ fontSize: '0.875rem', wordWrap: 'break-word' }}>
                       Productos con poco stock
                     </h6>
-                    <h2 className="mb-0 fw-bold text-white">{stats.productosBajoStock}</h2>
+                    <h2 className="mb-0 fw-bold text-danger" style={{ fontSize: '2rem' }}>{stats.productosBajoStock}</h2>
                   </div>
-                  <i className="bi bi-exclamation-triangle text-danger" style={{ fontSize: '3rem' }}></i>
+                  <i className="bi bi-exclamation-triangle text-danger" style={{ fontSize: '2.5rem', flexShrink: 0 }}></i>
                 </div>
               </div>
             </div>

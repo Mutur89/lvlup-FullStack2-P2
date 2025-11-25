@@ -817,13 +817,36 @@ footer {
 
 /* Headers sin efectos gamer */
 #main-admin h1,
-#main-admin h2, 
+#main-admin h2,
 #main-admin h3,
 #main-admin h4,
 #main-admin h5 {
   color: #212529 !important;
   text-shadow: none !important;
   filter: none !important;
+}
+
+/* LABELS Y TEXTOS EN FORMULARIOS DE ADMIN - MÁXIMA PRIORIDAD */
+#main-admin .text-dark,
+#main-admin label.text-dark,
+#main-admin .form-label.text-dark {
+  color: #212529 !important;
+  text-shadow: none !important;
+  font-weight: 600 !important;
+}
+
+#main-admin .text-primary,
+#main-admin label.text-primary,
+#main-admin .form-label.text-primary {
+  color: #0d6efd !important;
+  text-shadow: none !important;
+  font-weight: 600 !important;
+}
+
+/* Todos los form-label en admin deben ser oscuros */
+#main-admin .form-label {
+  color: #212529 !important;
+  text-shadow: none !important;
 }
 
 

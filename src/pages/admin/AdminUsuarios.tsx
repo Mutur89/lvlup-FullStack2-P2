@@ -171,7 +171,7 @@ const AdminUsuarios = () => {
                   <div className="col-md-4">
                     <label
                       htmlFor="filtroRol"
-                      className="form-label fw-bold text-primary"
+                      className="form-label fw-bold text-dark"
                     >
                       <i className="bi bi-funnel me-2"></i>
                       Filtrar por Rol
@@ -191,7 +191,7 @@ const AdminUsuarios = () => {
                   <div className="col-md-8">
                     <label
                       htmlFor="busqueda"
-                      className="form-label fw-bold text-primary"
+                      className="form-label fw-bold text-dark"
                     >
                       <i className="bi bi-search me-2"></i>
                       Buscar Usuario

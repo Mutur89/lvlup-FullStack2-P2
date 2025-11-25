@@ -216,7 +216,7 @@ const AdminEditarUsuario = () => {
               {/* Columna Izquierda */}
               <div className="col-md-6">
                 <div className="mb-3">
-                  <label htmlFor="nombre" className="form-label fw-bold">
+                  <label htmlFor="nombre" className="form-label fw-bold text-dark">
                     Nombre
                   </label>
                   <input
@@ -229,7 +229,7 @@ const AdminEditarUsuario = () => {
                   />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="apellido" className="form-label fw-bold">
+                  <label htmlFor="apellido" className="form-label fw-bold text-dark">
                     Apellido
                   </label>
                   <input
@@ -242,7 +242,7 @@ const AdminEditarUsuario = () => {
                   />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="rut" className="form-label fw-bold">
+                  <label htmlFor="rut" className="form-label fw-bold text-dark">
                     RUT
                   </label>
                   <input
@@ -255,7 +255,7 @@ const AdminEditarUsuario = () => {
                   />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="telefono" className="form-label">
+                  <label htmlFor="telefono" className="form-label text-dark">
                     Teléfono
                   </label>
                   <input
@@ -271,7 +271,7 @@ const AdminEditarUsuario = () => {
               {/* Columna Derecha */}
               <div className="col-md-6">
                 <div className="mb-3">
-                  <label htmlFor="correo" className="form-label fw-bold">
+                  <label htmlFor="correo" className="form-label fw-bold text-dark">
                     Correo Electrónico
                   </label>
                   <input
@@ -287,12 +287,12 @@ const AdminEditarUsuario = () => {
                 <div className="mb-3">
                   <label
                     htmlFor="rol"
-                    className="form-label fw-bold text-success"
+                    className="form-label fw-bold text-primary"
                   >
                     Rol de Usuario
                   </label>
                   <select
-                    className="form-select border-success"
+                    className="form-select border-primary"
                     id="rol"
                     value={formData.rol}
                     onChange={handleChange}
@@ -307,7 +307,7 @@ const AdminEditarUsuario = () => {
                 </div>
 
                 <div className="mb-3">
-                  <label htmlFor="region" className="form-label">
+                  <label htmlFor="region" className="form-label text-dark">
                     Región
                   </label>
                   <input
@@ -319,7 +319,7 @@ const AdminEditarUsuario = () => {
                   />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="comuna" className="form-label">
+                  <label htmlFor="comuna" className="form-label text-dark">
                     Comuna
                   </label>
                   <input
@@ -334,7 +334,7 @@ const AdminEditarUsuario = () => {
             </div>
 
             <div className="mb-3">
-              <label htmlFor="direccion" className="form-label">
+              <label htmlFor="direccion" className="form-label text-dark">
                 Dirección
               </label>
               <input

@@ -188,12 +188,12 @@ const AdminNuevoUsuario = () => {
             <div className="row g-3">
               {/* --- DATOS OBLIGATORIOS (Izquierda) --- */}
               <div className="col-md-6">
-                <h6 className="text-success border-bottom pb-2 mb-3">
+                <h6 className="text-primary border-bottom pb-2 mb-3">
                   Credenciales y Básicos
                 </h6>
 
                 <div className="mb-3">
-                  <label htmlFor="nombre" className="form-label fw-bold">
+                  <label htmlFor="nombre" className="form-label fw-bold text-dark">
                     Nombre *
                   </label>
                   <input
@@ -206,7 +206,7 @@ const AdminNuevoUsuario = () => {
                   />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="apellido" className="form-label fw-bold">
+                  <label htmlFor="apellido" className="form-label fw-bold text-dark">
                     Apellido *
                   </label>
                   <input
@@ -219,7 +219,7 @@ const AdminNuevoUsuario = () => {
                   />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="rut" className="form-label fw-bold">
+                  <label htmlFor="rut" className="form-label fw-bold text-dark">
                     RUT *
                   </label>
                   <input
@@ -233,7 +233,7 @@ const AdminNuevoUsuario = () => {
                   />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="correo" className="form-label fw-bold">
+                  <label htmlFor="correo" className="form-label fw-bold text-dark">
                     Correo Electrónico *
                   </label>
                   <input
@@ -246,7 +246,7 @@ const AdminNuevoUsuario = () => {
                   />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="contrasena" className="form-label fw-bold">
+                  <label htmlFor="contrasena" className="form-label fw-bold text-dark">
                     Contraseña *
                   </label>
                   <input
@@ -286,7 +286,7 @@ const AdminNuevoUsuario = () => {
                 </h6>
 
                 <div className="mb-3">
-                  <label htmlFor="telefono" className="form-label">
+                  <label htmlFor="telefono" className="form-label text-dark">
                     Teléfono
                   </label>
                   <input
@@ -300,7 +300,7 @@ const AdminNuevoUsuario = () => {
                 </div>
 
                 <div className="mb-3">
-                  <label htmlFor="fechaNacimiento" className="form-label">
+                  <label htmlFor="fechaNacimiento" className="form-label text-dark">
                     Fecha de Nacimiento
                   </label>
                   <input
@@ -316,7 +316,7 @@ const AdminNuevoUsuario = () => {
                 </div>
 
                 <div className="mb-3">
-                  <label htmlFor="direccion" className="form-label">
+                  <label htmlFor="direccion" className="form-label text-dark">
                     Dirección
                   </label>
                   <input
@@ -331,7 +331,7 @@ const AdminNuevoUsuario = () => {
 
                 <div className="row">
                   <div className="col-6 mb-3">
-                    <label htmlFor="region" className="form-label">
+                    <label htmlFor="region" className="form-label text-dark">
                       Región
                     </label>
                     <input
@@ -343,7 +343,7 @@ const AdminNuevoUsuario = () => {
                     />
                   </div>
                   <div className="col-6 mb-3">
-                    <label htmlFor="comuna" className="form-label">
+                    <label htmlFor="comuna" className="form-label text-dark">
                       Comuna
                     </label>
                     <input

@@ -138,7 +138,7 @@ const AdminMostrarProductos = () => {
         {/* Filtro */}
         <div className="row mb-4">
           <div className="col-md-4">
-            <label className="form-label fw-bold text-success">
+            <label className="form-label fw-bold text-dark">
               Filtrar por categoría
             </label>
             <select

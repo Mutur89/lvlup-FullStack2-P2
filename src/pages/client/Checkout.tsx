@@ -1,9 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
-import { decrementStock } from "../../utils/productService";
-import { getProductById } from "../../data/products";
-import { createOrder } from "../../utils/ordersService";
+import { getProductById, Product } from "../../utils/productService";
 import { useAuth } from "../../context/AuthContext";
 
 const Checkout = () => {
@@ -19,14 +17,37 @@ const Checkout = () => {
   });
 
   const [processing, setProcessing] = useState(false);
+  const [productos, setProductos] = useState<Map<number, Product>>(new Map());
 
   const total = getCartTotal();
+
+  // Cargar información de productos cuando cambia el carrito
+  useEffect(() => {
+    const loadProducts = async () => {
+      const productMap = new Map<number, Product>();
+
+      for (const item of carrito) {
+        const producto = await getProductById(String(item.productId));
+        if (producto) {
+          productMap.set(item.productId, producto);
+        }
+      }
+
+      setProductos(productMap);
+    };
+
+    if (carrito.length > 0) {
+      loadProducts();
+    } else {
+      setProductos(new Map());
+    }
+  }, [carrito]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.id]: e.target.value });
   };
 
-  const handlePagar = () => {
+  const handlePagar = async () => {
     if (carrito.length === 0) {
       alert("Tu carrito está vacío");
       return;
@@ -37,48 +58,70 @@ const Checkout = () => {
       return;
     }
 
-    setProcessing(true);
-  // PASO 1: Preparar items del carrito
-    const items = carrito.map((c) => ({ id: c.id, cantidad: c.cantidad }));
-  // PASO 2: Decrementar stock (validación transaccional)
-    const result = decrementStock(items);
-
-    if (!result.success) {
-      const reasons = result.failed
-        .map((f) => `${f.id}: ${f.reason}`)
-        .join("\n");
-      alert("No se pudo procesar la compra:\n" + reasons);
-      setProcessing(false);
+    // Verificar que el token existe
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Tu sesión ha expirado. Por favor inicia sesión nuevamente.");
+      navigate("/login");
       return;
     }
 
-    // Crear pedido y guardarlo en localStorage
+    setProcessing(true);
+
     try {
-      const order = createOrder({
-        customer: {
-          nombre: form.nombre,
-          email: form.email,
-          telefono: form.telefono,
-          direccion: form.direccion,
-          userId: user?.id || null,
-        },
-        items: carrito.map((c) => ({ id: c.id, cantidad: c.cantidad })),
-        total,
-        status: "pagado",
+      // Simular delay de procesamiento de pago
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      // PASO 1: Decrementar stock de cada producto en el backend
+      const updatePromises = carrito.map(async (item) => {
+        const producto = productos.get(item.productId);
+        if (producto) {
+          const nuevoStock = producto.stock - item.quantity;
+
+          // Importar productsApi desde services/api.ts
+          const { productsApi } = await import("../../services/api");
+
+          // Actualizar el stock en el backend con TODOS los campos requeridos
+          await productsApi.update(item.productId, {
+            nombre: producto.nombre,
+            categoria: producto.categoria,
+            descripcion: producto.descripcion,
+            imagen: producto.imagen,
+            precio: producto.precio,
+            stock: nuevoStock,
+          });
+        }
       });
 
-      // Simular pago exitoso
+      // Esperar a que todos los stocks se actualicen
+      await Promise.all(updatePromises);
+
+      // PASO 2: Limpiar carrito en el backend
+      await clearCart();
+
+      // PASO 3: Simular pago exitoso
       alert(
-        `Pago recibido. ¡Gracias, ${
+        `¡Pago recibido con éxito!\n\nGracias ${
           form.nombre || user?.nombre || "cliente"
-        }! Pedido ID: ${order.id} - Monto: $${total.toLocaleString("es-CL")}`
+        }!\n\nMonto total: $${total.toLocaleString("es-CL")} CLP\n\nRecibirás un correo de confirmación a ${form.email}`
       );
-      clearCart();
-      setProcessing(false);
+
+      // Redirigir al home
       navigate("/");
-    } catch (err) {
+    } catch (error: any) {
+      console.error("Error al procesar el pago:", error);
+
+      // Si es un error 401, significa que el token expiró
+      if (error.response?.status === 401) {
+        alert("Tu sesión ha expirado. Por favor inicia sesión nuevamente.");
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        navigate("/login");
+      } else {
+        alert("Error al procesar el pago. Por favor intenta nuevamente.");
+      }
+    } finally {
       setProcessing(false);
-      alert("Error al guardar el pedido. Por favor intenta nuevamente.");
     }
   };
 
@@ -136,10 +179,7 @@ const Checkout = () => {
                 </div>
 
                 <div className="mb-3">
-                  <label
-                    htmlFor="direccion"
-                    className="form-label text-success"
-                  >
+                  <label htmlFor="direccion" className="form-label text-success">
                     Dirección
                   </label>
                   <input
@@ -152,31 +192,49 @@ const Checkout = () => {
                 </div>
               </div>
 
-              {/* Opcional: mostrar resumen por ítem */}
+              {/* Resumen de items */}
               <div className="mt-3">
                 <h5 className="text-light">Resumen de items</h5>
-                <ul className="list-group">
-                  {carrito.map((c) => {
-                    const p = getProductById(c.id);
-                    if (!p) return null;
-                    return (
-                      <li
-                        key={c.id}
-                        className="list-group-item bg-dark text-light border-0 mb-2 rounded"
-                      >
-                        <div className="d-flex justify-content-between">
-                          <div>
-                            <div className="fw-bold">{p.nombre}</div>
-                            <div className="text-success">x{c.cantidad}</div>
+                {carrito.length === 0 ? (
+                  <div className="alert alert-info">No hay productos en el carrito</div>
+                ) : (
+                  <ul className="list-group">
+                    {carrito.map((item) => {
+                      const producto = productos.get(item.productId);
+                      if (!producto) {
+                        return (
+                          <li
+                            key={item.id}
+                            className="list-group-item bg-dark text-light border-0 mb-2 rounded"
+                          >
+                            <div className="text-muted">Cargando producto...</div>
+                          </li>
+                        );
+                      }
+
+                      const subtotal = item.unitPrice * item.quantity;
+
+                      return (
+                        <li
+                          key={item.id}
+                          className="list-group-item bg-dark text-light border-0 mb-2 rounded"
+                        >
+                          <div className="d-flex justify-content-between align-items-center">
+                            <div>
+                              <div className="fw-bold">{producto.nombre}</div>
+                              <div className="text-success">
+                                {item.quantity} x ${item.unitPrice.toLocaleString("es-CL")}
+                              </div>
+                            </div>
+                            <div className="text-success fw-bold">
+                              ${subtotal.toLocaleString("es-CL")}
+                            </div>
                           </div>
-                          <div className="text-success">
-                            ${(p.precio * c.cantidad).toLocaleString("es-CL")}
-                          </div>
-                        </div>
-                      </li>
-                    );
-                  })}
-                </ul>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
               </div>
             </div>
 
@@ -184,11 +242,8 @@ const Checkout = () => {
               <article className="card p-4 shadow-sm bg-dark border-success">
                 <h4 className="mb-3 text-success">Resumen de pago</h4>
 
-                <div
-                  className="mb-3 text-success"
-                  style={{ fontSize: "1.3rem" }}
-                >
-                  <div>Total a pagar: ${total.toLocaleString("es-CL")}</div>
+                <div className="mb-3 text-success" style={{ fontSize: "1.3rem" }}>
+                  <div>Total a pagar: ${total.toLocaleString("es-CL")} CLP</div>
                 </div>
 
                 <button

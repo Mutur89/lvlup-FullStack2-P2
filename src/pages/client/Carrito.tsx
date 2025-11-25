@@ -1,15 +1,37 @@
 // src/pages/client/Carrito.tsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
-import { getProductById } from "../../data/products";
-import { decrementStock } from "../../utils/productService";
+import { getProductById, Product } from "../../utils/productService";
 
 const Carrito = () => {
-  const { carrito, updateQuantity, clearCart, getCartTotal } = useCart();
-
+  const { carrito, updateQuantity, clearCart, getCartTotal, loading } = useCart();
   const [cupon, setCupon] = useState("");
   const [descuento, setDescuento] = useState(0);
+  const [productos, setProductos] = useState<Map<number, Product>>(new Map());
+  const navigate = useNavigate();
+
+  // Cargar información de productos cuando cambia el carrito
+  useEffect(() => {
+    const loadProducts = async () => {
+      const productMap = new Map<number, Product>();
+
+      for (const item of carrito) {
+        const producto = await getProductById(String(item.productId));
+        if (producto) {
+          productMap.set(item.productId, producto);
+        }
+      }
+
+      setProductos(productMap);
+    };
+
+    if (carrito.length > 0) {
+      loadProducts();
+    } else {
+      setProductos(new Map());
+    }
+  }, [carrito]);
 
   const handleAplicarCupon = () => {
     if (cupon.trim().toUpperCase() === "DESCUENTO10") {
@@ -21,15 +43,13 @@ const Carrito = () => {
     }
   };
 
-  const handleVaciarCarrito = () => {
+  const handleVaciarCarrito = async () => {
     if (window.confirm("¿Estás seguro de que quieres vaciar el carrito?")) {
-      clearCart();
+      await clearCart();
       setDescuento(0);
       setCupon("");
     }
   };
-
-  const navigate = useNavigate();
 
   const handleProcederCompra = () => {
     if (carrito.length === 0) {
@@ -40,28 +60,43 @@ const Carrito = () => {
     navigate("/checkout");
   };
 
-  const handleSumar = (productId: string) => {
-    const item = carrito.find((i) => i.id === productId);
-    const producto = getProductById(productId);
+  const handleSumar = async (cartItemId: number, productId: number) => {
+    const item = carrito.find((i) => i.id === cartItemId);
+    const producto = productos.get(productId);
 
     if (item && producto) {
-      if (item.cantidad >= producto.stock) {
+      if (item.quantity >= producto.stock) {
         alert("No puedes agregar más, alcanzaste el stock disponible.");
       } else {
-        updateQuantity(productId, item.cantidad + 1);
+        await updateQuantity(cartItemId, item.quantity + 1);
       }
     }
   };
 
-  const handleRestar = (productId: string) => {
-    const item = carrito.find((i) => i.id === productId);
-    if (item && item.cantidad > 1) {
-      updateQuantity(productId, item.cantidad - 1);
+  const handleRestar = async (cartItemId: number) => {
+    const item = carrito.find((i) => i.id === cartItemId);
+    if (item && item.quantity > 1) {
+      await updateQuantity(cartItemId, item.quantity - 1);
     }
   };
 
   const total = getCartTotal();
   const totalConDescuento = total * (1 - descuento);
+
+  if (loading && carrito.length === 0) {
+    return (
+      <main>
+        <section className="main-content">
+          <div className="container my-5 text-center">
+            <div className="spinner-border text-success" role="status">
+              <span className="visually-hidden">Cargando...</span>
+            </div>
+            <p className="text-light mt-3">Cargando carrito...</p>
+          </div>
+        </section>
+      </main>
+    );
+  }
 
   return (
     <main>
@@ -82,12 +117,11 @@ const Carrito = () => {
               ) : (
                 <ul id="lista-carrito" className="list-group">
                   {carrito.map((item) => {
-                    const producto = getProductById(item.id);
+                    const producto = productos.get(item.productId);
                     if (!producto) return null;
 
-                    const precioFormateado =
-                      producto.precio.toLocaleString("es-CL");
-                    const desactivarSumar = item.cantidad >= producto.stock;
+                    const precioFormateado = producto.precio.toLocaleString("es-CL");
+                    const desactivarSumar = item.quantity >= producto.stock;
 
                     return (
                       <li
@@ -118,15 +152,15 @@ const Carrito = () => {
                             <button
                               className="btn btn-outline-light btn-sm"
                               onClick={() => handleRestar(item.id)}
-                              disabled={item.cantidad <= 1}
+                              disabled={item.quantity <= 1 || loading}
                             >
                               -
                             </button>
-                            <span className="mx-2">{item.cantidad}</span>
+                            <span className="mx-2">{item.quantity}</span>
                             <button
                               className="btn btn-outline-light btn-sm"
-                              onClick={() => handleSumar(item.id)}
-                              disabled={desactivarSumar}
+                              onClick={() => handleSumar(item.id, item.productId)}
+                              disabled={desactivarSumar || loading}
                             >
                               +
                             </button>
@@ -154,8 +188,7 @@ const Carrito = () => {
                         Total: ${total.toLocaleString("es-CL")}
                       </div>
                       <div>
-                        Total con cupón: $
-                        {totalConDescuento.toLocaleString("es-CL")}
+                        Total con cupón: ${totalConDescuento.toLocaleString("es-CL")}
                       </div>
                     </>
                   ) : (
@@ -190,7 +223,7 @@ const Carrito = () => {
                   id="proceder-compra"
                   className="btn btn-success w-100 mb-2"
                   onClick={handleProcederCompra}
-                  disabled={carrito.length === 0}
+                  disabled={carrito.length === 0 || loading}
                 >
                   Pagar
                 </button>
@@ -199,7 +232,7 @@ const Carrito = () => {
                   id="borrar-carrito"
                   className="btn btn-danger w-100"
                   onClick={handleVaciarCarrito}
-                  disabled={carrito.length === 0}
+                  disabled={carrito.length === 0 || loading}
                 >
                   Vaciar carrito
                 </button>

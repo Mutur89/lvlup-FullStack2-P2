@@ -212,9 +212,80 @@ export const ordersApi = {
   },
 };
 
+// ==================== CARTS API ====================
+
+export interface CartItemResponse {
+  id: number;
+  productId: number;
+  quantity: number;
+  unitPrice: number;
+  cartId: number;
+}
+
+export interface CartResponse {
+  id: number;
+  userId: number;
+  cartItems: CartItemResponse[];
+}
+
+export interface CartWithTotalResponse {
+  cart: CartResponse;
+  total: number;
+  itemCount: number;
+}
+
+export interface AddToCartRequest {
+  productId: number;
+  quantity?: number;
+}
+
+export interface UpdateCartQuantityRequest {
+  quantity: number;
+}
+
+export const cartsApi = {
+  getMyCart: async (): Promise<CartWithTotalResponse> => {
+    const response = await axiosInstance.get("/api/v1/carts");
+    return response.data;
+  },
+
+  addToCart: async (data: AddToCartRequest): Promise<CartWithTotalResponse> => {
+    const response = await axiosInstance.post("/api/v1/carts/items", data);
+    return response.data;
+  },
+
+  updateQuantity: async (
+    cartItemId: number,
+    data: UpdateCartQuantityRequest
+  ): Promise<CartWithTotalResponse> => {
+    const response = await axiosInstance.put(
+      `/api/v1/carts/items/${cartItemId}`,
+      data
+    );
+    return response.data;
+  },
+
+  removeItem: async (cartItemId: number): Promise<CartWithTotalResponse> => {
+    const response = await axiosInstance.delete(
+      `/api/v1/carts/items/${cartItemId}`
+    );
+    return response.data;
+  },
+
+  clearCart: async (): Promise<void> => {
+    await axiosInstance.delete("/api/v1/carts");
+  },
+
+  getTotal: async (): Promise<{ total: number }> => {
+    const response = await axiosInstance.get("/api/v1/carts/total");
+    return response.data;
+  },
+};
+
 export default {
   auth: authApi,
   users: usersApi,
   products: productsApi,
   orders: ordersApi,
+  carts: cartsApi,
 };

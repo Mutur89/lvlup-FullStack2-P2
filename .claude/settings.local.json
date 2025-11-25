@@ -11,7 +11,8 @@
       "Bash(netstat:*)",
       "Bash(taskkill:*)",
       "Bash(tasklist:*)",
-      "Bash(del \"d:\\Duoc\\Fullstack 2\\lvlup-backend\\src\\main\\java\\com\\lvlup\\tienda\\config\\SwaggerConfig.java\")"
+      "Bash(del \"d:\\Duoc\\Fullstack 2\\lvlup-backend\\src\\main\\java\\com\\lvlup\\tienda\\config\\SwaggerConfig.java\")",
+      "Bash(psql:*)"
     ],
     "deny": [],
     "ask": []

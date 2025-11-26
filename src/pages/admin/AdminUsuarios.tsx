@@ -323,20 +323,24 @@ const AdminUsuarios = () => {
                               </span>
                             </td>
                             <td className="text-end pe-4">
-                              <Link
-                                to={`/admin/usuarios/editar?id=${usuario.id}`}
-                                className="btn btn-sm btn-outline-primary me-2"
-                                title="Editar usuario"
-                              >
-                                <i className="bi bi-pencil"></i>
-                              </Link>
-                              <button
-                                className="btn btn-sm btn-outline-danger"
-                                onClick={() => handleEliminarUsuario(usuario)}
-                                title="Eliminar usuario"
-                              >
-                                <i className="bi bi-trash"></i>
-                              </button>
+                              <div className="d-flex justify-content-end gap-2 flex-nowrap">
+                                <Link
+                                  to={`/admin/usuarios/editar?id=${usuario.id}`}
+                                  className="btn btn-sm btn-outline-primary"
+                                  title="Editar usuario"
+                                  style={{ minWidth: '36px' }}
+                                >
+                                  <i className="bi bi-pencil"></i>
+                                </Link>
+                                <button
+                                  className="btn btn-sm btn-outline-danger"
+                                  onClick={() => handleEliminarUsuario(usuario)}
+                                  title="Eliminar usuario"
+                                  style={{ minWidth: '36px' }}
+                                >
+                                  <i className="bi bi-trash"></i>
+                                </button>
+                              </div>
                             </td>
                           </tr>
                         ))}

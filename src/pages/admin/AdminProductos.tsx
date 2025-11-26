@@ -213,18 +213,22 @@ const AdminMostrarProductos = () => {
                           </span>
                         </td>
                         <td className="text-end pe-4">
-                          <Link
-                            to={`/admin/productos/editar?id=${p.id}`}
-                            className="btn btn-sm btn-outline-primary me-2"
-                          >
-                            <i className="bi bi-pencil"></i>
-                          </Link>
-                          <button
-                            className="btn btn-sm btn-outline-danger"
-                            onClick={() => handleEliminar(p.id)}
-                          >
-                            <i className="bi bi-trash"></i>
-                          </button>
+                          <div className="d-flex justify-content-end gap-2 flex-nowrap">
+                            <Link
+                              to={`/admin/productos/editar?id=${p.id}`}
+                              className="btn btn-sm btn-outline-primary"
+                              style={{ minWidth: '36px' }}
+                            >
+                              <i className="bi bi-pencil"></i>
+                            </Link>
+                            <button
+                              className="btn btn-sm btn-outline-danger"
+                              onClick={() => handleEliminar(p.id)}
+                              style={{ minWidth: '36px' }}
+                            >
+                              <i className="bi bi-trash"></i>
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}

@@ -1,14 +1,11 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
+import { useCart } from "../../context/CartContext";
 
 const Header = () => {
   const { user, logout } = useAuth();
+  const { getCartCount } = useCart();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    // AuthProvider already listens storage events; header doesn't need extra logic here
-  }, []);
 
   const handleLogout = () => {
     logout();
@@ -150,8 +147,7 @@ const Header = () => {
             <ul className="navbar-nav ms-auto align-items-center">
               <li className="nav-item me-2">
                 <Link className="nav-link" to="/carrito">
-                  <i className="bi bi-cart"></i> Carrito (
-                  <span id="cart-count">0</span>)
+                  <i className="bi bi-cart"></i> Carrito ({getCartCount()})
                 </Link>
               </li>
               {!user ? (

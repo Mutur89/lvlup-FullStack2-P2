@@ -8,6 +8,7 @@ import {
 } from "react";
 import { cartsApi, CartWithTotalResponse } from "../services/api";
 import { getProductById, Product } from "../utils/productService";
+import { useAuth } from "./AuthContext";
 
 export interface CartItem {
   id: number; // ID del CartItem en el backend
@@ -45,22 +46,10 @@ interface CartProviderProps {
 }
 
 export const CartProvider = ({ children }: CartProviderProps) => {
+  const { user } = useAuth();
   const [carrito, setCarrito] = useState<CartItem[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
-
-  // Cargar carrito desde el backend al montar (solo si está autenticado)
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      refreshCart();
-    }
-  }, []);
-
-  // Actualizar el contador del DOM cuando cambie el carrito
-  useEffect(() => {
-    updateCartCountInDOM();
-  }, [carrito]);
 
   const refreshCart = async () => {
     try {
@@ -90,13 +79,17 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     }
   };
 
-  const updateCartCountInDOM = () => {
-    const cartCountElement = document.getElementById("cart-count");
-    if (cartCountElement) {
-      const totalCount = carrito.reduce((acc, item) => acc + item.quantity, 0);
-      cartCountElement.textContent = String(totalCount);
+  // Cargar carrito desde el backend cuando el usuario cambia
+  useEffect(() => {
+    if (user) {
+      // Si hay usuario autenticado, cargar su carrito
+      refreshCart();
+    } else {
+      // Si no hay usuario (logout), limpiar el carrito
+      setCarrito([]);
+      setTotal(0);
     }
-  };
+  }, [user]); // Dependencia: cuando cambia el usuario
 
   const addToCart = async (productId: string) => {
     try {

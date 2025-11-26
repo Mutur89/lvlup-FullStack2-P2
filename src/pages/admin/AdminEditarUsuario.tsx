@@ -13,6 +13,7 @@ const AdminEditarUsuario = () => {
     apellido: "",
     rut: "",
     correo: "",
+    contrasena: "", // Nueva contraseña (opcional)
     rol: "",
     telefono: "",
     direccion: "",
@@ -40,6 +41,7 @@ const AdminEditarUsuario = () => {
             apellido: usuario.apellido || usuario.apellidos || "",
             rut: usuario.rut || "",
             correo: usuario.correo || "",
+            contrasena: "", // No cargamos la contraseña por seguridad
             rol: usuario.rol || "CLIENTE",
             telefono: usuario.telefono || "",
             direccion: usuario.direccion || "",
@@ -77,7 +79,6 @@ const AdminEditarUsuario = () => {
 
     try {
       // Preparamos el objeto para actualizar
-      // Nota: No enviamos contraseña aquí para no sobreescribirla (el backend la mantiene si viene null)
       const usuarioActualizado: Partial<User> & { id: string } = {
         id: id,
         nombre: formData.nombre,
@@ -90,6 +91,11 @@ const AdminEditarUsuario = () => {
         region: formData.region,
         comuna: formData.comuna,
       };
+
+      // Solo agregar contraseña si el admin ingresó una nueva
+      if (formData.contrasena && formData.contrasena.trim() !== "") {
+        (usuarioActualizado as any).contrasena = formData.contrasena;
+      }
 
       const exito = await updateUser(usuarioActualizado);
 
@@ -282,6 +288,24 @@ const AdminEditarUsuario = () => {
                     onChange={handleChange}
                     required
                   />
+                </div>
+
+                <div className="mb-3">
+                  <label htmlFor="contrasena" className="form-label fw-bold text-dark">
+                    Nueva Contraseña
+                  </label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    id="contrasena"
+                    value={formData.contrasena}
+                    onChange={handleChange}
+                    placeholder="Dejar vacío para no cambiar"
+                    minLength={6}
+                  />
+                  <div className="form-text">
+                    Opcional: Dejar en blanco para mantener la contraseña actual
+                  </div>
                 </div>
 
                 <div className="mb-3">
